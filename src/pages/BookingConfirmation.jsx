@@ -1,88 +1,97 @@
 // src/pages/BookingConfirmation.jsx
-import React, { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-// Try to import; fallback if missing
-import { experts as expertsFromData } from '../data/mockData'
-
-const fallbackExperts = [
-  { id: 1, name: 'Dr. Jane Bauer', tags: ['AI', 'Manufacturing'], price: '€250/h', rating: 4.8, location: 'Berlin, DE' },
-  { id: 2, name: 'Prof. Alan Smith', tags: ['Materials', 'Energy'], price: '€220/h', rating: 4.6, location: 'Zürich, CH' },
-]
-
-function makeRef() {
-  const n = Math.floor(Math.random() * 9000) + 1000
-  return `AIQ-2025-${n}`
-}
+import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { experts as expertsFromData } from "../data/mockData.js";
+import SummaryCard from "../components/SummaryCard.jsx";
 
 export default function BookingConfirmation() {
-  const navigate = useNavigate()
-  const [state, setState] = useState(null)
-  const [ref, setRef] = useState(makeRef())
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const stored = JSON.parse(sessionStorage.getItem('adventiq.booking') || '{}')
-    if (!stored || !stored.expertId || !stored.dateObj || !stored.time) {
-      navigate('/dashboard/consultation/browse')
-      return
-    }
-    setState(stored)
-  }, [navigate])
+  const expertId = sessionStorage.getItem("booking_expertId");
+  const date = sessionStorage.getItem("booking_date");
+  const time = sessionStorage.getItem("booking_time");
+  const tier = sessionStorage.getItem("booking_tier") || "standard";
+  const ref = sessionStorage.getItem("booking_ref") || "AIQ-2025-0000";
 
-  const experts = (expertsFromData && expertsFromData.length ? expertsFromData : fallbackExperts)
-  const expert = useMemo(() => experts.find(e => String(e.id) === String(state?.expertId)), [experts, state])
+  const experts = Array.isArray(expertsFromData) ? expertsFromData : [];
+  const expert = useMemo(
+    () => experts.find((e) => String(e.id) === String(expertId)),
+    [experts, expertId]
+  );
 
-  if (!state || !expert) return null
+  const goToMyBookings = () => {
+    // No real route in prototype — send to dashboard as a stand-in
+    navigate("/dashboard");
+  };
 
-  const dateTime = `${state.dateObj.date} ${state.time}`
+  if (!expert || !date || !time) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-12">
+        <h1 className="text-2xl md:text-3xl font-bold text-primary">Booking details missing</h1>
+        <p className="text-gray-600 mt-2">Please restart the booking process.</p>
+        <div className="mt-4">
+          <button
+            className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+            onClick={() => navigate("/dashboard/consultation/browse")}
+          >
+            Back to Experts
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      {/* Breadcrumb */}
-      <nav className="text-sm text-gray-500 mb-4">
-        <span className="text-primary font-medium">Booking</span>
-        <span className="mx-2">·</span>
-        <span>Step 3 of 3</span>
-      </nav>
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="text-sm text-gray-500 mb-2">Booking · Step 3 of 3</div>
 
-      <div className="rounded-xl border border-green-200 bg-green-50 text-green-900 px-4 py-3 mb-4">
-        Booking confirmed (Prototype)
+      <div className="rounded-xl border border-green-200 bg-green-50 text-green-800 px-4 py-3">
+        <div className="font-semibold">Booking confirmed (Prototype)</div>
+        <div className="text-sm">Reference: <span className="font-mono">{ref}</span></div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-primary">Confirmation</h1>
-            <p className="text-sm text-gray-600 mt-1">Reference: <span className="font-mono">{ref}</span></p>
+      <div className="mt-6 grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5">
+          <h2 className="font-semibold text-primary">Summary</h2>
+          <div className="mt-3">
+            <SummaryCard expert={expert} dateTime={`${date} · ${time}`} tier={tier} />
           </div>
-          <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-700">{state.tier === 'premium' ? 'Premium' : 'Standard'}</span>
+          <p className="text-xs text-gray-500 mt-3">
+            Payment and notifications are mocked in this prototype.
+          </p>
         </div>
 
-        <div className="mt-4 grid gap-3 text-sm">
-          <div><span className="text-gray-500">Expert</span><div className="font-medium">{expert.name}</div></div>
-          <div><span className="text-gray-500">Date &amp; time</span><div className="font-medium">{dateTime}</div></div>
-          <div><span className="text-gray-500">Location</span><div className="font-medium">{expert.location || '—'}</div></div>
-        </div>
+        <div className="bg-white border border-gray-200 rounded-xl p-5 h-fit">
+          <h3 className="font-semibold text-primary">Next steps</h3>
+          <ul className="mt-2 text-sm text-gray-700 list-disc pl-5 space-y-1">
+            <li>We’ll notify the expert to confirm (mock).</li>
+            <li>You’ll receive a calendar invite (mock).</li>
+            <li>A summary/report will appear in “My Reports” (mock).</li>
+          </ul>
 
-        <p className="text-xs text-gray-500 mt-4">
-          Payment and notifications are mocked in this prototype.
-        </p>
-
-        <div className="mt-6 flex flex-wrap gap-2">
-          <button
-            onClick={() => navigate('/my/bookings')}
-            className="px-3 py-1.5 rounded-lg bg-primary text-white"
-          >
-            Go to My Bookings
-          </button>
-          <button
-            disabled
-            className="px-3 py-1.5 rounded-lg border text-gray-400 cursor-not-allowed"
-            title="Disabled in prototype"
-          >
-            Download Confirmation
-          </button>
+          <div className="mt-4 flex flex-col gap-2">
+            <button
+              className="px-3 py-1.5 rounded-lg bg-primary text-white"
+              onClick={goToMyBookings}
+            >
+              Go to My Bookings
+            </button>
+            <button
+              className="px-3 py-1.5 rounded-lg border text-gray-400 cursor-not-allowed"
+              disabled
+              title="Disabled in prototype"
+            >
+              Download Confirmation (PDF)
+            </button>
+            <button
+              className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+              onClick={() => navigate("/dashboard/consultation/browse")}
+            >
+              Book another expert
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
