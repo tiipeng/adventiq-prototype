@@ -2,8 +2,8 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Static import (no top-level await)
-import { bookings as bookingsDataFile, reports as reportsDataFile } from "../data/mockData.js";
+// Static import of what's actually exported
+import { bookings as bookingsDataFile } from "../data/mockData.js";
 
 const STATUS_BADGE = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -15,21 +15,55 @@ const STATUS_BADGE = {
 export default function BusinessDashboard() {
   const navigate = useNavigate();
 
-  // Use imported data or fallbacks so the page always renders
-  const bookingsData = Array.isArray(bookingsDataFile) && bookingsDataFile.length
-    ? bookingsDataFile
-    : [
-        { id: "bk-1001", expert: "Dr. Jane Bauer", date: "2025-11-06", time: "10:30", status: "confirmed", tier: "Premium", report: false },
-        { id: "bk-1002", expert: "Prof. Alan Smith", date: "2025-11-12", time: "14:00", status: "pending", tier: "Standard", report: false },
-        { id: "bk-1003", expert: "Dr. Linh Nguyen", date: "2025-11-18", time: "09:00", status: "completed", tier: "Premium", report: true },
-      ];
+  // Use imported bookings or a safe fallback so the page always renders
+  const bookingsData =
+    Array.isArray(bookingsDataFile) && bookingsDataFile.length
+      ? bookingsDataFile
+      : [
+          {
+            id: "bk-1001",
+            expert: "Dr. Jane Bauer",
+            date: "2025-11-06",
+            time: "10:30",
+            status: "confirmed",
+            tier: "Premium",
+            report: false,
+          },
+          {
+            id: "bk-1002",
+            expert: "Prof. Alan Smith",
+            date: "2025-11-12",
+            time: "14:00",
+            status: "pending",
+            tier: "Standard",
+            report: false,
+          },
+          {
+            id: "bk-1003",
+            expert: "Dr. Linh Nguyen",
+            date: "2025-11-18",
+            time: "09:00",
+            status: "completed",
+            tier: "Premium",
+            report: true,
+          },
+        ];
 
-  const reportsData = Array.isArray(reportsDataFile) && reportsDataFile.length
-    ? reportsDataFile
-    : [
-        { id: "rp-501", title: "Consultation Summary — AI in Manufacturing", expert: "Dr. Jane Bauer", date: "2025-10-28" },
-        { id: "rp-502", title: "Materials Fatigue — Initial Findings", expert: "Prof. Alan Smith", date: "2025-10-15" },
-      ];
+  // Local fallback for reports (since mockData.js doesn't export reports)
+  const reportsData = [
+    {
+      id: "rp-501",
+      title: "Consultation Summary — AI in Manufacturing",
+      expert: "Dr. Jane Bauer",
+      date: "2025-10-28",
+    },
+    {
+      id: "rp-502",
+      title: "Materials Fatigue — Initial Findings",
+      expert: "Prof. Alan Smith",
+      date: "2025-10-15",
+    },
+  ];
 
   const [filter, setFilter] = useState("All");
 
@@ -101,7 +135,11 @@ export default function BusinessDashboard() {
             <div key={o.id} className="bg-white border border-gray-200 rounded-xl p-4">
               <div className="flex items-center justify-between">
                 <div className="font-medium text-primary">{o.expert}</div>
-                <span className={`text-xs px-2 py-0.5 rounded ${STATUS_BADGE[o.status] || "bg-gray-100 text-gray-700"}`}>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded ${
+                    STATUS_BADGE[o.status] || "bg-gray-100 text-gray-700"
+                  }`}
+                >
                   {o.status}
                 </span>
               </div>
@@ -179,7 +217,11 @@ export default function BusinessDashboard() {
                   <td className="px-4 py-3">{b.date}</td>
                   <td className="px-4 py-3">{b.time}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded ${STATUS_BADGE[b.status] || "bg-gray-100 text-gray-700"}`}>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded ${
+                        STATUS_BADGE[b.status] || "bg-gray-100 text-gray-700"
+                      }`}
+                    >
                       {b.status}
                     </span>
                   </td>
