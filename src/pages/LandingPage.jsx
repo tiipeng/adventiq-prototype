@@ -101,24 +101,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer strip */}
-      <footer className="border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between text-sm text-gray-500">
-          <span>© {new Date().getFullYear()} AdventIQ</span>
-          <div className="flex gap-4">
-            <button onClick={() => {}} className="hover:text-primary" type="button">
-              Privacy
-            </button>
-            <button onClick={() => {}} className="hover:text-primary" type="button">
-              Terms
-            </button>
-            <button onClick={() => {}} className="hover:text-primary" type="button">
-              Contact
-            </button>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
