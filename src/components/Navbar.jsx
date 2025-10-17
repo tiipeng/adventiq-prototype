@@ -65,8 +65,6 @@ export default function Navbar() {
           {/* Show Dashboard if logged in as business or expert */}
           {role && <LinkItem to={dashboardPath}>Dashboard</LinkItem>}
 
-          {/* Convenience entry into Expert area (prototype) */}
-          <LinkItem to="/expert">Expert</LinkItem>
 
           {!role ? (
             <>
