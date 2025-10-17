@@ -2,27 +2,24 @@
 import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingChecklist from "../components/OnboardingChecklist.jsx";
-// Try to import shared mocks; fall back if missing.
-let expertsData = [];
-let bookingsData = [];
-try {
-  // eslint-disable-next-line import/no-unresolved
-  const md = await import("../data/mockData.js");
-  expertsData = md.experts || [];
-  bookingsData = md.bookings || [];
-} catch (e) {
-  // Fallback mock
-  expertsData = [
-    { id: 1, name: "Dr. Jane Bauer", tags: ["AI"], price: "€250/h", location: "Berlin, DE" },
-  ];
-  bookingsData = [
-    { id: "b1", customer: "ACME GmbH", topic: "AI in manufacturing", date: "2025-11-04", time: "10:30", tier: "Premium", duration: "1.5h", notes: "Scope discussion", status: "pending" },
-    { id: "b2", customer: "NovaTech", topic: "Materials fatigue", date: "2025-11-10", time: "14:00", tier: "Standard", duration: "2h", notes: "Review test data", status: "approved" },
-  ];
-}
+
+// Static import (no top-level await)
+import { experts as expertsFromData = [], bookings as bookingsFromData = [] } from "../data/mockData.js";
 
 export default function ExpertDashboard() {
   const navigate = useNavigate();
+
+  // Use imported data or local minimal fallback
+  const expertsData = Array.isArray(expertsFromData) && expertsFromData.length
+    ? expertsFromData
+    : [{ id: 1, name: "Dr. Jane Bauer", tags: ["AI"], price: "€250/h", location: "Berlin, DE" }];
+
+  const bookingsData = Array.isArray(bookingsFromData) && bookingsFromData.length
+    ? bookingsFromData
+    : [
+        { id: "b1", customer: "ACME GmbH", topic: "AI in manufacturing", date: "2025-11-04", time: "10:30", tier: "Premium", duration: "1.5h", notes: "Scope discussion", status: "pending" },
+        { id: "b2", customer: "NovaTech", topic: "Materials fatigue", date: "2025-11-10", time: "14:00", tier: "Standard", duration: "2h", notes: "Review test data", status: "approved" },
+      ];
 
   // Session flags
   const acceptedTCNDA = sessionStorage.getItem("acceptedTCNDA") === "true";
@@ -31,8 +28,8 @@ export default function ExpertDashboard() {
   const availabilitySlots = JSON.parse(sessionStorage.getItem("availabilitySlots") || "{}");
   const profileSaved = sessionStorage.getItem("expertProfileSaved") === "true";
 
-  const pending = useMemo(() => bookingsData.filter(b => b.status === "pending").length, []);
-  const upcoming = useMemo(() => bookingsData.filter(b => b.status === "approved").length, []);
+  const pending = useMemo(() => bookingsData.filter(b => b.status === "pending").length, [bookingsData]);
+  const upcoming = useMemo(() => bookingsData.filter(b => b.status === "approved").length, [bookingsData]);
 
   const profilePercent = useMemo(() => {
     // crude progress indicator
