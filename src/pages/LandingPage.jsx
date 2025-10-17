@@ -63,15 +63,13 @@ export default function LandingPage() {
 
           {/* Right: Illustration / banner */}
           <div>
-            <div className="rounded-2xl border border-gray-200 bg-white h-56 md:h-72 shadow-sm flex items-center justify-center">
-              <div className="text-center">
-                <img
-                  src={logo}
-                  alt="AdventIQ product banner"
-                  className="mx-auto w-60 h-60 md:w-72 md:h-72 object-contain mb-3 rounded-2xl p-2"
-                  />
-              </div>
-            </div>
+          <div className="rounded-2xl border border-gray-200 bg-white h-72 md:h-96 shadow-sm overflow-hidden">
+            <img
+              src={logo}
+              alt="AdventIQ full banner"
+              className="w-full h-full object-contain p-6"
+            />
+          </div>
           </div>
         </div>
 
