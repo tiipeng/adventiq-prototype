@@ -1,7 +1,6 @@
 // src/pages/LandingPage.jsx
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../components/Navbar.jsx'
 import SearchBar from '../components/SearchBar.jsx'
 
 export default function LandingPage() {
@@ -19,8 +18,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F9FAFB]">
-      <Navbar />
-
       {/* Hero Section */}
       <section className="flex-1">
         <div className="max-w-7xl mx-auto px-4 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center">
