@@ -1,0 +1,10 @@
+# netlify.toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Single Page App redirect so BrowserRouter works on refresh
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
