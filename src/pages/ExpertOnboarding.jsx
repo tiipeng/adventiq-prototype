@@ -6,35 +6,78 @@ import OnboardingChecklist from "../components/OnboardingChecklist.jsx";
 export default function ExpertOnboarding() {
   const navigate = useNavigate();
 
-  const acceptedTCNDA = sessionStorage.getItem("acceptedTCNDA") === "true";
+  const accepted = sessionStorage.getItem("acceptedTCNDA") === "true";
   const applicationSubmitted = sessionStorage.getItem("applicationSubmitted") === "true";
   const applicationApproved = sessionStorage.getItem("applicationApproved") === "true";
-  const availabilitySlots = JSON.parse(sessionStorage.getItem("availabilitySlots") || "{}");
-  const profileSaved = sessionStorage.getItem("expertProfileSaved") === "true";
 
   const items = [
-    { key: "tcs", title: "Accept T&C + NDA", status: acceptedTCNDA ? "completed" : "pending", route: "/expert/terms", description: "Agree to T&C and NDA." },
-    { key: "availability", title: "Provide Availabilities", status: Object.keys(availabilitySlots).length ? "completed" : "pending", route: "/expert/availability", description: "Set your working slots." },
-    { key: "application", title: "Become an Expert (Application)", status: applicationSubmitted ? "completed" : "pending", route: "/expert/application", description: "Tell us about you." },
-    { key: "approval", title: "Approval Status", status: applicationApproved ? "completed" : (applicationSubmitted ? "inprogress" : "pending"), route: "/expert/approval", description: "Track your approval." },
-    { key: "profile", title: "Registration & Profile", status: profileSaved ? "completed" : "pending", route: "/expert/profile", description: "Complete your profile." },
-    { key: "orders", title: "Get Orders & Approve/Reject", status: "pending", route: "/expert/orders", description: "Manage requests." },
+    {
+      key: "tcs",
+      title: "Accept T&C + NDA",
+      desc: "Agree to the platform terms and non-disclosure.",
+      status: accepted ? "completed" : "pending",
+      route: "/expert/terms",
+    },
+    {
+      key: "availability",
+      title: "Provide Availabilities",
+      desc: "Add your bookable time slots.",
+      status: "inprogress",
+      route: "/expert/availability",
+    },
+    {
+      key: "application",
+      title: "Become an Expert (Application)",
+      desc: "Tell us your expertise, pricing, and background.",
+      status: applicationSubmitted ? "completed" : "pending",
+      route: "/expert/application",
+    },
+    {
+      key: "approval",
+      title: "Approval Status",
+      desc: "We review and approve your application.",
+      status: applicationApproved ? "completed" : "pending",
+      route: "/expert/approval",
+    },
+    {
+      key: "profile",
+      title: "Registration & Profile",
+      desc: "Complete your public profile so clients can find you.",
+      status: "inprogress",
+      route: "/expert/profile",
+    },
+    // NOTE: Orders intentionally NOT part of onboarding anymore.
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-primary">Expert Onboarding</h1>
-        <p className="text-gray-600 mt-2">Complete the steps below. Status is visual only for this prototype.</p>
-      </header>
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="text-sm text-gray-500">Expert</div>
+      <h1 className="text-2xl md:text-3xl font-bold text-primary">Onboarding</h1>
+      <p className="text-gray-600 mt-2">
+        Complete these steps to start receiving consultation requests.
+      </p>
 
-      <OnboardingChecklist items={items} />
+      <div className="mt-6 bg-white border border-gray-200 rounded-xl">
+        <OnboardingChecklist items={items} />
+      </div>
 
-      <div className="mt-6">
-        <button className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50" onClick={() => navigate("/expert")}>
-          Back to Expert Dashboard
+      <div className="mt-6 flex gap-2">
+        <button
+          className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+          onClick={() => navigate("/expert")}
+        >
+          Back to Expert Home
+        </button>
+        <button
+          className="px-3 py-1.5 rounded-lg bg-primary text-white"
+          onClick={() => navigate("/expert/orders")}
+        >
+          Go to Orders
         </button>
       </div>
+      <p className="text-xs text-gray-500 mt-3">
+        Prototype note: Orders are managed separately from onboarding.
+      </p>
     </div>
   );
 }

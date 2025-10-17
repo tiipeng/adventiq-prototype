@@ -3,172 +3,211 @@ import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingChecklist from "../components/OnboardingChecklist.jsx";
 
-// Static import (no top-level await, no defaults in import)
-import { experts as expertsFromData, bookings as bookingsFromData } from "../data/mockData.js";
+// Optional: try to read pending requests count from mock bookings (fallback if not available)
+let pendingCount = 2;
+let upcomingCount = 1;
+try {
+  // If your mockData exports `bookings`, you could derive counts here.
+  // import { bookings } from "../data/mockData.js"; // avoid compile errors if not exported
+  // pendingCount = bookings.filter(b => b.status === "pending").length || pendingCount;
+  // upcomingCount = bookings.filter(b => b.status === "confirmed").length || upcomingCount;
+} catch {
+  // keep fallbacks
+}
 
 export default function ExpertDashboard() {
   const navigate = useNavigate();
 
-  // Use imported data or local minimal fallback
-  const expertsData =
-    Array.isArray(expertsFromData) && expertsFromData.length
-      ? expertsFromData
-      : [{ id: 1, name: "Dr. Jane Bauer", tags: ["AI"], price: "€250/h", location: "Berlin, DE" }];
-
-  const bookingsData =
-    Array.isArray(bookingsFromData) && bookingsFromData.length
-      ? bookingsFromData
-      : [
-          {
-            id: "b1",
-            customer: "ACME GmbH",
-            topic: "AI in manufacturing",
-            date: "2025-11-04",
-            time: "10:30",
-            tier: "Premium",
-            duration: "1.5h",
-            notes: "Scope discussion",
-            status: "pending",
-          },
-          {
-            id: "b2",
-            customer: "NovaTech",
-            topic: "Materials fatigue",
-            date: "2025-11-10",
-            time: "14:00",
-            tier: "Standard",
-            duration: "2h",
-            notes: "Review test data",
-            status: "approved",
-          },
-        ];
-
-  // Session flags
-  const acceptedTCNDA = sessionStorage.getItem("acceptedTCNDA") === "true";
+  // Onboarding status (prototype flags)
+  const accepted = sessionStorage.getItem("acceptedTCNDA") === "true";
   const applicationSubmitted = sessionStorage.getItem("applicationSubmitted") === "true";
   const applicationApproved = sessionStorage.getItem("applicationApproved") === "true";
-  const availabilitySlots = JSON.parse(sessionStorage.getItem("availabilitySlots") || "{}");
-  const profileSaved = sessionStorage.getItem("expertProfileSaved") === "true";
 
-  const pending = useMemo(() => bookingsData.filter((b) => b.status === "pending").length, [bookingsData]);
-  const upcoming = useMemo(() => bookingsData.filter((b) => b.status === "approved").length, [bookingsData]);
-
+  // crude “profile completion” mock
   const profilePercent = useMemo(() => {
-    // crude progress indicator
-    let p = 0;
-    if (acceptedTCNDA) p += 20;
-    if (Object.keys(availabilitySlots).length) p += 20;
+    let p = 20;
+    if (accepted) p += 20;
     if (applicationSubmitted) p += 20;
     if (applicationApproved) p += 20;
-    if (profileSaved) p += 20;
-    return p;
-  }, [acceptedTCNDA, availabilitySlots, applicationSubmitted, applicationApproved, profileSaved]);
+    // assume some profile fields filled
+    p += 10;
+    return Math.min(p, 95);
+  }, [accepted, applicationSubmitted, applicationApproved]);
 
   const checklistItems = [
     {
       key: "tcs",
       title: "Accept T&C + NDA",
-      status: acceptedTCNDA ? "completed" : "pending",
+      desc: "Agree to terms so bookings can start.",
+      status: accepted ? "completed" : "pending",
       route: "/expert/terms",
-      description: "Agree to the legal terms to get started.",
     },
     {
       key: "availability",
       title: "Provide Availabilities",
-      status: Object.keys(availabilitySlots).length ? "completed" : "pending",
+      desc: "Add time slots clients can book.",
+      status: "inprogress",
       route: "/expert/availability",
-      description: "Set your available time slots.",
     },
     {
       key: "application",
       title: "Become an Expert (Application)",
+      desc: "Tell us about your expertise and rates.",
       status: applicationSubmitted ? "completed" : "pending",
       route: "/expert/application",
-      description: "Tell us about your expertise.",
     },
     {
       key: "approval",
       title: "Approval Status",
-      status: applicationApproved ? "completed" : applicationSubmitted ? "inprogress" : "pending",
+      desc: "See if your application is approved.",
+      status: applicationApproved ? "completed" : "pending",
       route: "/expert/approval",
-      description: "Track your approval.",
     },
     {
       key: "profile",
       title: "Registration & Profile",
-      status: profileSaved ? "completed" : "pending",
+      desc: "Complete your public expert profile.",
+      status: "inprogress",
       route: "/expert/profile",
-      description: "Complete your public profile.",
+    },
+    // NOTE: Orders REMOVED from onboarding
+  ];
+
+  // Mock incoming orders preview (UI-only)
+  const ordersPreview = [
+    {
+      id: "req-2001",
+      customer: "Acme Robotics",
+      topic: "AI for industrial vision",
+      when: "2025-11-07 · 10:30",
+      tier: "Premium",
+      status: "Pending",
     },
     {
-      key: "orders",
-      title: "Get Orders & Approve/Reject",
-      status: pending ? "inprogress" : "pending",
-      route: "/expert/orders",
-      description: "Manage booking requests.",
+      id: "req-2002",
+      customer: "GreenCell GmbH",
+      topic: "Battery materials advisory",
+      when: "2025-11-08 · 14:00",
+      tier: "Standard",
+      status: "Pending",
     },
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-primary">Welcome, Dr. Jane Doe</h1>
-        <p className="text-gray-600 mt-2">Your expert workspace at AdventIQ.</p>
-      </header>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-sm text-gray-500">Expert</div>
+          <h1 className="text-2xl md:text-3xl font-bold text-primary">Welcome, Dr. Jane Doe</h1>
+          <p className="text-gray-600 mt-1">
+            Manage your expert profile, availability, and orders.
+          </p>
+        </div>
+        <div className="hidden md:flex gap-2">
+          <button
+            className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+            onClick={() => navigate("/expert/orders")}
+          >
+            View Orders
+          </button>
+          <button
+            className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+            onClick={() => navigate("/expert/availability")}
+          >
+            Edit Availability
+          </button>
+          <button
+            className="px-3 py-1.5 rounded-lg bg-primary text-white"
+            onClick={() => navigate("/expert/profile")}
+          >
+            Go to Profile
+          </button>
+        </div>
+      </div>
 
       {/* Stats */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-sm text-gray-500">Pending Requests</div>
-          <div className="text-2xl font-bold text-primary">{pending}</div>
+          <div className="text-2xl font-semibold text-primary mt-1">{pendingCount}</div>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-sm text-gray-500">Upcoming Consultations</div>
-          <div className="text-2xl font-bold text-primary">{upcoming}</div>
+          <div className="text-2xl font-semibold text-primary mt-1">{upcomingCount}</div>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-sm text-gray-500">Profile Completion</div>
-          <div className="text-2xl font-bold text-primary">{profilePercent}%</div>
+          <div className="text-2xl font-semibold text-primary mt-1">{profilePercent}%</div>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-sm text-gray-500">T&C Status</div>
-          <div
-            className={`text-sm inline-block px-2 py-1 rounded ${
-              acceptedTCNDA ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
-            }`}
-          >
-            {acceptedTCNDA ? "Accepted" : "Not accepted"}
+          <div className="text-sm mt-1">
+            <span
+              className={`px-2 py-0.5 rounded ${
+                accepted ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-800"
+              }`}
+            >
+              {accepted ? "Accepted" : "Pending"}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Onboarding */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-semibold text-primary">Onboarding checklist</h2>
-          <div className="flex gap-2">
-            <button
-              className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
-              onClick={() => navigate("/expert/orders")}
-            >
-              View Orders
-            </button>
-            <button
-              className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
-              onClick={() => navigate("/expert/availability")}
-            >
-              Edit Availability
-            </button>
-            <button
-              className="px-3 py-1.5 rounded-lg bg-primary text-white text-sm"
-              onClick={() => navigate("/expert/profile")}
-            >
-              Go to Profile
-            </button>
-          </div>
+      {/* Orders panel (moved out of onboarding) */}
+      <section className="mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-primary">Orders</h2>
+          <button
+            className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+            onClick={() => navigate("/expert/orders")}
+          >
+            Go to Orders
+          </button>
         </div>
-        <OnboardingChecklist items={checklistItems} />
-      </div>
+        <div className="mt-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ordersPreview.map((o) => (
+            <div key={o.id} className="bg-white border border-gray-200 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div className="font-medium text-primary">{o.customer}</div>
+                <span className="text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">
+                  {o.status}
+                </span>
+              </div>
+              <div className="mt-1 text-sm text-gray-600">{o.topic}</div>
+              <div className="mt-1 text-xs text-gray-500">{o.when}</div>
+              <div className="mt-1 text-xs text-gray-500">Tier: {o.tier}</div>
+              <div className="mt-3 flex gap-2">
+                <button
+                  className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm"
+                  onClick={() => navigate("/expert/orders")}
+                >
+                  Review
+                </button>
+                <button
+                  className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm"
+                  onClick={() => navigate("/expert/orders")}
+                >
+                  Approve / Reject
+                </button>
+              </div>
+            </div>
+          ))}
+          {!ordersPreview.length && (
+            <div className="sm:col-span-2 lg:col-span-3 bg-white border border-gray-200 rounded-xl p-5 text-sm text-gray-600">
+              No orders yet. Once clients book you, requests will appear here.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Onboarding (without Orders) */}
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold text-primary">Onboarding</h2>
+        <div className="mt-3 bg-white border border-gray-200 rounded-xl">
+          <OnboardingChecklist items={checklistItems} />
+        </div>
+      </section>
     </div>
   );
 }
