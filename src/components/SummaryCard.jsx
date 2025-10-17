@@ -1,77 +1,103 @@
 // src/components/SummaryCard.jsx
-import React, { useMemo } from 'react'
+import React from "react";
 
-function initials(name = '') {
-  return name.split(' ').slice(0, 2).map(n => n[0]?.toUpperCase() || '').join('')
+/**
+ * Safe helpers
+ */
+function getInitials(name) {
+  if (!name) return "EX";
+  try {
+    const parts = String(name).trim().split(/\s+/).slice(0, 2);
+    return parts.map((p) => p[0]?.toUpperCase() || "").join("") || "EX";
+  } catch {
+    return "EX";
+  }
 }
 
-function parsePriceToNumber(priceStr = '') {
-  // Extract first number-like value; e.g., "€250/h" -> 250
-  const n = Number((priceStr.match(/\d+([.,]\d+)?/) || ['0'])[0].replace(',', '.'))
-  return isNaN(n) ? 0 : n
+function normalizeTags(tags) {
+  if (!tags) return [];
+  if (Array.isArray(tags)) return tags;
+  // accept comma-separated string
+  return String(tags)
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
 }
 
-export default function SummaryCard({ expert, dateTime, tier = 'standard' }) {
-  const base = useMemo(() => parsePriceToNumber(expert?.price), [expert])
-  const uplift = 150
-  const total = tier === 'premium' ? base + uplift : base
+function parsePriceToNumber(price) {
+  // Accept formats like "€250/h", "250", "€ 250", etc.
+  if (!price) return 0;
+  const m = String(price).match(/(\d+(?:[.,]\d+)?)/);
+  if (!m) return 0;
+  return Number(m[1].replace(",", "."));
+}
+
+export default function SummaryCard({ expert, dateTime, tier }) {
+  const name = expert?.name || "Expert";
+  const location = expert?.location || "—";
+  const tags = normalizeTags(expert?.tags);
+  const base = parsePriceToNumber(expert?.price) || 250; // fallback base
+  const isPremium = tier === "premium";
+  const uplift = isPremium ? 150 : 0; // mock uplift for premium
+  const total = base + uplift;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-      <h3 className="font-semibold text-primary mb-3">Booking summary</h3>
+    <div className="rounded-xl border border-gray-200 p-4">
+      <div className="flex items-start gap-3">
+        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary text-white font-semibold">
+          {getInitials(name)}
+        </div>
+        <div className="flex-1">
+          <div className="font-semibold text-primary">{name}</div>
+          <div className="text-sm text-gray-600">{location}</div>
 
-      {expert ? (
-        <>
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
-              {initials(expert.name)}
-            </div>
-            <div className="flex-1">
-              <div className="font-medium text-primary">{expert.name}</div>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {(expert.tags || []).slice(0, 3).map(t => (
-                  <span key={t} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs">{t}</span>
-                ))}
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-sm mt-3">
-                <div>
-                  <div className="text-gray-500">Location</div>
-                  <div className="font-medium">{expert.location || '—'}</div>
-                </div>
-                <div>
-                  <div className="text-gray-500">Base price</div>
-                  <div className="font-medium">{expert.price || '€—/h'}</div>
-                </div>
-                <div>
-                  <div className="text-gray-500">When</div>
-                  <div className="font-medium">{dateTime || '—'}</div>
-                </div>
-                <div>
-                  <div className="text-gray-500">Tier</div>
-                  <div className="font-medium">
-                    <span className={`px-2 py-0.5 rounded text-xs ${tier === 'premium' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700'}`}>
-                      {tier === 'premium' ? 'Premium' : 'Standard'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Mock total */}
-          <div className="mt-4 border-t pt-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Estimated total (mock)</span>
-              <div className="font-semibold text-primary">€{total}</div>
-            </div>
-            {tier === 'premium' && (
-              <p className="text-xs text-gray-500 mt-1">Includes service uplift (+€{uplift}) for AdventIQ Leader.</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {tags.length ? (
+              tags.map((t) => (
+                <span
+                  key={t}
+                  className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs"
+                >
+                  {t}
+                </span>
+              ))
+            ) : (
+              <span className="text-xs text-gray-500">No tags</span>
             )}
           </div>
-        </>
-      ) : (
-        <p className="text-sm text-gray-600">No expert selected.</p>
-      )}
+
+          {dateTime ? (
+            <div className="mt-3 text-sm">
+              <div className="text-gray-500">Selected time</div>
+              <div className="font-medium">{dateTime}</div>
+            </div>
+          ) : null}
+
+          <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+            <div>
+              <div className="text-gray-500">Base price</div>
+              <div className="font-medium">€{base}/h</div>
+            </div>
+            <div>
+              <div className="text-gray-500">Total (mock)</div>
+              <div className="font-medium flex items-center gap-2">
+                €{total}
+                {isPremium && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#00B7C2]/10 text-[#0A2540]">
+                    Premium +€{uplift}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {tier ? (
+            <div className="mt-2 text-xs text-gray-500">
+              Tier: <span className="font-medium capitalize">{tier}</span>
+            </div>
+          ) : null}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
