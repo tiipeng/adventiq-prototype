@@ -68,9 +68,8 @@ export default function LandingPage() {
                 <img
                   src={logo}
                   alt="AdventIQ product banner"
-                  className="mx-auto w-32 h-32 object-contain mb-3 rounded-xl"
-                />
-                <p className="text-sm text-gray-500">AdventIQ Product Banner</p>
+                  className="mx-auto w-60 h-60 md:w-72 md:h-72 object-contain mb-3 rounded-2xl p-2"
+                  />
               </div>
             </div>
           </div>
