@@ -1,77 +1,151 @@
 // src/components/Navbar.jsx
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+
+const linkBase =
+  "px-3 py-2 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent/50";
+const linkActive = "text-white bg-primary";
+const linkIdle = "text-gray-700 hover:bg-gray-100";
 
 export default function Navbar() {
-  const navigate = useNavigate()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [role, setRole] = useState(() => sessionStorage.getItem("role"));
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const NavLink = ({ label, to }) => (
+  useEffect(() => {
+    // Refresh role on route change to reflect login/logout
+    setRole(sessionStorage.getItem("role"));
+  }, [location]);
+
+  const Logo = () => (
     <button
-      onClick={() => { navigate(to); setOpen(false) }}
-      className="px-3 py-2 text-sm text-gray-700 hover:text-primary"
+      onClick={() => {
+        navigate("/");
+        setOpen(false);
+      }}
+      className="flex items-center gap-2"
+      aria-label="AdventIQ home"
     >
-      {label}
+      <div className="w-8 h-8 rounded-lg bg-primary" />
+      <span className="font-bold text-lg text-primary">AdventIQ</span>
     </button>
-  )
+  );
+
+  const LinkItem = ({ to, children }) => (
+    <NavLink
+      to={to}
+      className={({ isActive }) => `${linkBase} ${isActive ? linkActive : linkIdle}`}
+      onClick={() => setOpen(false)}
+    >
+      {children}
+    </NavLink>
+  );
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("role");
+    setRole(null);
+    navigate("/");
+    setOpen(false);
+  };
+
+  const dashboardPath = role === "expert" ? "/expert" : "/dashboard";
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Left: Logo */}
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2"
-          aria-label="AdventIQ home"
-        >
-          <div className="w-8 h-8 rounded-lg bg-primary" />
-          <span className="font-bold text-lg text-primary">AdventIQ</span>
-        </button>
+        <Logo />
 
-        {/* Right (desktop) */}
-        <nav className="hidden md:flex items-center gap-1">
-          <NavLink label="Home" to="/" />
-          <NavLink label="How It Works" to="/how-it-works" />
-          <NavLink label="About" to="/about" />
-          <NavLink label="Login" to="/login" />
-          <button
-            onClick={() => navigate('/register')}
-            className="ml-2 rounded-lg px-3 py-2 text-sm bg-primary text-white hover:opacity-90"
-          >
-            Register
-          </button>
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-2">
+          <LinkItem to="/">Home</LinkItem>
+          <LinkItem to="/how-it-works">How It Works</LinkItem>
+          <LinkItem to="/about">About</LinkItem>
+
+          {/* Show Dashboard after login */}
+          {role && <LinkItem to={dashboardPath}>Dashboard</LinkItem>}
+
+          {/* Always allow Expert entry (prototype convenience) */}
+          <LinkItem to="/expert">Expert</LinkItem>
+
+          {!role ? (
+            <>
+              <LinkItem to="/login">Login</LinkItem>
+              <NavLink
+                to="/register"
+                className={({ isActive }) =>
+                  `${linkBase} ${
+                    isActive ? linkActive : "bg-primary text-white hover:opacity-90"
+                  }`
+                }
+                onClick={() => setOpen(false)}
+              >
+                Register
+              </NavLink>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="ml-2 px-3 py-2 text-sm rounded-lg border hover:bg-gray-50"
+            >
+              Logout
+            </button>
+          )}
         </nav>
 
         {/* Mobile hamburger */}
         <button
-          onClick={() => setOpen(v => !v)}
-          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100"
-          aria-label="Open menu"
+          className="md:hidden w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center"
+          aria-label="Toggle menu"
           aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-primary">
-            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <svg width="22" height="22" viewBox="0 0 24 24" className="text-primary">
+            <path
+              d="M4 6h16M4 12h16M4 18h16"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
       </div>
 
-      {/* Mobile sheet */}
+      {/* Mobile menu */}
       {open && (
         <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-2 flex flex-col">
-            <NavLink label="Home" to="/" />
-            <NavLink label="How It Works" to="/how-it-works" />
-            <NavLink label="About" to="/about" />
-            <NavLink label="Login" to="/login" />
-            <button
-              onClick={() => { navigate('/register'); setOpen(false) }}
-              className="mt-2 rounded-lg px-3 py-2 text-sm bg-primary text-white"
-            >
-              Register
-            </button>
+          <div className="px-4 py-3 flex flex-col gap-1">
+            <LinkItem to="/">Home</LinkItem>
+            <LinkItem to="/how-it-works">How It Works</LinkItem>
+            <LinkItem to="/about">About</LinkItem>
+
+            {role && <LinkItem to={dashboardPath}>Dashboard</LinkItem>}
+            <LinkItem to="/expert">Expert</LinkItem>
+
+            {!role ? (
+              <>
+                <LinkItem to="/login">Login</LinkItem>
+                <button
+                  onClick={() => {
+                    navigate("/register");
+                    setOpen(false);
+                  }}
+                  className="mt-1 px-3 py-2 rounded-lg bg-primary text-white text-sm"
+                >
+                  Register
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="mt-1 px-3 py-2 rounded-lg border text-sm hover:bg-gray-50"
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
       )}
     </header>
-  )
+  );
 }
