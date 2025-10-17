@@ -2,7 +2,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import SearchBar from '../components/SearchBar.jsx'
-import logo from '../image/logo.png'
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -59,17 +58,13 @@ export default function LandingPage() {
           </div>
 
           {/* Illustration / banner placeholder */}
-        
-<div className="rounded-2xl border border-gray-200 bg-white h-56 md:h-72 shadow-sm flex items-center justify-center">
-  <div className="text-center">
-    <img
-      src={logo}
-      alt="AdventIQ product banner"
-      className="mx-auto w-32 h-32 object-contain mb-3 rounded-xl"
-    />
-    <p className="text-sm text-gray-500">AdventIQ Product Banner</p>
-  </div>
-</div>
+          <div className="rounded-2xl border border-gray-200 bg-white h-56 md:h-72 shadow-sm flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-24 h-24 mx-auto rounded-xl bg-neutral mb-3" />
+              <p className="text-sm text-gray-500">Abstract product banner (placeholder)</p>
+            </div>
+          </div>
+        </div>
 
         {/* Central Search */}
         <div className="max-w-7xl mx-auto px-4">
