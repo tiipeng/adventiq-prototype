@@ -3,30 +3,61 @@ import React, { useMemo, useState } from "react";
 import BookingRequestCard from "../components/BookingRequestCard.jsx";
 
 // Static import (no top-level await)
-import { bookings as bookingsFromData = [] } from "../data/mockData.js";
+import { bookings as bookingsFromData } from "../data/mockData.js";
 
 const FILTERS = ["All", "Pending", "Approved", "Rejected"];
 
 export default function ExpertOrders() {
   // Use imported data or fallback
-  const initial = Array.isArray(bookingsFromData) && bookingsFromData.length
-    ? bookingsFromData
-    : [
-        { id: "b1", customer: "ACME GmbH", topic: "AI in manufacturing", date: "2025-11-04", time: "10:30", tier: "Premium", duration: "1.5h", notes: "Scope discussion", status: "pending" },
-        { id: "b2", customer: "NovaTech", topic: "Materials fatigue", date: "2025-11-10", time: "14:00", tier: "Standard", duration: "2h", notes: "Review test data", status: "approved" },
-        { id: "b3", customer: "BioLabs", topic: "Assay validation", date: "2025-11-18", time: "09:00", tier: "Premium", duration: "1h", notes: "Short sync", status: "rejected" },
-      ];
+  const initial =
+    Array.isArray(bookingsFromData) && bookingsFromData.length
+      ? bookingsFromData
+      : [
+          {
+            id: "b1",
+            customer: "ACME GmbH",
+            topic: "AI in manufacturing",
+            date: "2025-11-04",
+            time: "10:30",
+            tier: "Premium",
+            duration: "1.5h",
+            notes: "Scope discussion",
+            status: "pending",
+          },
+          {
+            id: "b2",
+            customer: "NovaTech",
+            topic: "Materials fatigue",
+            date: "2025-11-10",
+            time: "14:00",
+            tier: "Standard",
+            duration: "2h",
+            notes: "Review test data",
+            status: "approved",
+          },
+          {
+            id: "b3",
+            customer: "BioLabs",
+            topic: "Assay validation",
+            date: "2025-11-18",
+            time: "09:00",
+            tier: "Premium",
+            duration: "1h",
+            notes: "Short sync",
+            status: "rejected",
+          },
+        ];
 
   const [filter, setFilter] = useState("All");
   const [local, setLocal] = useState(initial);
 
   const filtered = useMemo(() => {
     if (filter === "All") return local;
-    return local.filter(r => r.status.toLowerCase() === filter.toLowerCase());
+    return local.filter((r) => r.status.toLowerCase() === filter.toLowerCase());
   }, [filter, local]);
 
   const updateStatus = (id, status) => {
-    setLocal(prev => prev.map(r => (r.id === id ? { ...r, status } : r)));
+    setLocal((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
   };
 
   return (
@@ -35,13 +66,15 @@ export default function ExpertOrders() {
       <p className="text-gray-600 mt-2">Approve / reject incoming booking requests. Visual only.</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {FILTERS.map(f => {
+        {FILTERS.map((f) => {
           const active = f === filter;
           return (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-full border text-sm ${active ? "bg-primary text-white border-primary" : "hover:bg-gray-50"}`}
+              className={`px-3 py-1.5 rounded-full border text-sm ${
+                active ? "bg-primary text-white border-primary" : "hover:bg-gray-50"
+              }`}
             >
               {f}
             </button>
@@ -50,7 +83,7 @@ export default function ExpertOrders() {
       </div>
 
       <div className="mt-6 grid gap-4">
-        {filtered.map(req => (
+        {filtered.map((req) => (
           <BookingRequestCard
             key={req.id}
             request={req}

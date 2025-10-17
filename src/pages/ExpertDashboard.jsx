@@ -3,23 +3,45 @@ import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingChecklist from "../components/OnboardingChecklist.jsx";
 
-// Static import (no top-level await)
-import { experts as expertsFromData = [], bookings as bookingsFromData = [] } from "../data/mockData.js";
+// Static import (no top-level await, no defaults in import)
+import { experts as expertsFromData, bookings as bookingsFromData } from "../data/mockData.js";
 
 export default function ExpertDashboard() {
   const navigate = useNavigate();
 
   // Use imported data or local minimal fallback
-  const expertsData = Array.isArray(expertsFromData) && expertsFromData.length
-    ? expertsFromData
-    : [{ id: 1, name: "Dr. Jane Bauer", tags: ["AI"], price: "€250/h", location: "Berlin, DE" }];
+  const expertsData =
+    Array.isArray(expertsFromData) && expertsFromData.length
+      ? expertsFromData
+      : [{ id: 1, name: "Dr. Jane Bauer", tags: ["AI"], price: "€250/h", location: "Berlin, DE" }];
 
-  const bookingsData = Array.isArray(bookingsFromData) && bookingsFromData.length
-    ? bookingsFromData
-    : [
-        { id: "b1", customer: "ACME GmbH", topic: "AI in manufacturing", date: "2025-11-04", time: "10:30", tier: "Premium", duration: "1.5h", notes: "Scope discussion", status: "pending" },
-        { id: "b2", customer: "NovaTech", topic: "Materials fatigue", date: "2025-11-10", time: "14:00", tier: "Standard", duration: "2h", notes: "Review test data", status: "approved" },
-      ];
+  const bookingsData =
+    Array.isArray(bookingsFromData) && bookingsFromData.length
+      ? bookingsFromData
+      : [
+          {
+            id: "b1",
+            customer: "ACME GmbH",
+            topic: "AI in manufacturing",
+            date: "2025-11-04",
+            time: "10:30",
+            tier: "Premium",
+            duration: "1.5h",
+            notes: "Scope discussion",
+            status: "pending",
+          },
+          {
+            id: "b2",
+            customer: "NovaTech",
+            topic: "Materials fatigue",
+            date: "2025-11-10",
+            time: "14:00",
+            tier: "Standard",
+            duration: "2h",
+            notes: "Review test data",
+            status: "approved",
+          },
+        ];
 
   // Session flags
   const acceptedTCNDA = sessionStorage.getItem("acceptedTCNDA") === "true";
@@ -28,8 +50,8 @@ export default function ExpertDashboard() {
   const availabilitySlots = JSON.parse(sessionStorage.getItem("availabilitySlots") || "{}");
   const profileSaved = sessionStorage.getItem("expertProfileSaved") === "true";
 
-  const pending = useMemo(() => bookingsData.filter(b => b.status === "pending").length, [bookingsData]);
-  const upcoming = useMemo(() => bookingsData.filter(b => b.status === "approved").length, [bookingsData]);
+  const pending = useMemo(() => bookingsData.filter((b) => b.status === "pending").length, [bookingsData]);
+  const upcoming = useMemo(() => bookingsData.filter((b) => b.status === "approved").length, [bookingsData]);
 
   const profilePercent = useMemo(() => {
     // crude progress indicator
@@ -43,12 +65,48 @@ export default function ExpertDashboard() {
   }, [acceptedTCNDA, availabilitySlots, applicationSubmitted, applicationApproved, profileSaved]);
 
   const checklistItems = [
-    { key: "tcs", title: "Accept T&C + NDA", status: acceptedTCNDA ? "completed" : "pending", route: "/expert/terms", description: "Agree to the legal terms to get started." },
-    { key: "availability", title: "Provide Availabilities", status: Object.keys(availabilitySlots).length ? "completed" : "pending", route: "/expert/availability", description: "Set your available time slots." },
-    { key: "application", title: "Become an Expert (Application)", status: applicationSubmitted ? "completed" : "pending", route: "/expert/application", description: "Tell us about your expertise." },
-    { key: "approval", title: "Approval Status", status: applicationApproved ? "completed" : (applicationSubmitted ? "inprogress" : "pending"), route: "/expert/approval", description: "Track your approval." },
-    { key: "profile", title: "Registration & Profile", status: profileSaved ? "completed" : "pending", route: "/expert/profile", description: "Complete your public profile." },
-    { key: "orders", title: "Get Orders & Approve/Reject", status: pending ? "inprogress" : "pending", route: "/expert/orders", description: "Manage booking requests." },
+    {
+      key: "tcs",
+      title: "Accept T&C + NDA",
+      status: acceptedTCNDA ? "completed" : "pending",
+      route: "/expert/terms",
+      description: "Agree to the legal terms to get started.",
+    },
+    {
+      key: "availability",
+      title: "Provide Availabilities",
+      status: Object.keys(availabilitySlots).length ? "completed" : "pending",
+      route: "/expert/availability",
+      description: "Set your available time slots.",
+    },
+    {
+      key: "application",
+      title: "Become an Expert (Application)",
+      status: applicationSubmitted ? "completed" : "pending",
+      route: "/expert/application",
+      description: "Tell us about your expertise.",
+    },
+    {
+      key: "approval",
+      title: "Approval Status",
+      status: applicationApproved ? "completed" : applicationSubmitted ? "inprogress" : "pending",
+      route: "/expert/approval",
+      description: "Track your approval.",
+    },
+    {
+      key: "profile",
+      title: "Registration & Profile",
+      status: profileSaved ? "completed" : "pending",
+      route: "/expert/profile",
+      description: "Complete your public profile.",
+    },
+    {
+      key: "orders",
+      title: "Get Orders & Approve/Reject",
+      status: pending ? "inprogress" : "pending",
+      route: "/expert/orders",
+      description: "Manage booking requests.",
+    },
   ];
 
   return (
@@ -74,7 +132,11 @@ export default function ExpertDashboard() {
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-sm text-gray-500">T&C Status</div>
-          <div className={`text-sm inline-block px-2 py-1 rounded ${acceptedTCNDA ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
+          <div
+            className={`text-sm inline-block px-2 py-1 rounded ${
+              acceptedTCNDA ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+            }`}
+          >
             {acceptedTCNDA ? "Accepted" : "Not accepted"}
           </div>
         </div>
@@ -85,9 +147,24 @@ export default function ExpertDashboard() {
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-semibold text-primary">Onboarding checklist</h2>
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50" onClick={() => navigate("/expert/orders")}>View Orders</button>
-            <button className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50" onClick={() => navigate("/expert/availability")}>Edit Availability</button>
-            <button className="px-3 py-1.5 rounded-lg bg-primary text-white text-sm" onClick={() => navigate("/expert/profile")}>Go to Profile</button>
+            <button
+              className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
+              onClick={() => navigate("/expert/orders")}
+            >
+              View Orders
+            </button>
+            <button
+              className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
+              onClick={() => navigate("/expert/availability")}
+            >
+              Edit Availability
+            </button>
+            <button
+              className="px-3 py-1.5 rounded-lg bg-primary text-white text-sm"
+              onClick={() => navigate("/expert/profile")}
+            >
+              Go to Profile
+            </button>
           </div>
         </div>
         <OnboardingChecklist items={checklistItems} />
