@@ -116,10 +116,6 @@ export default function Navbar() {
             <LinkItem to="/">Home</LinkItem>
             <LinkItem to="/how-it-works">How It Works</LinkItem>
             <LinkItem to="/about">About</LinkItem>
-
-            {role && <LinkItem to={dashboardPath}>Dashboard</LinkItem>}
-            <LinkItem to="/expert">Expert</LinkItem>
-
             {!role ? (
               <>
                 <LinkItem to="/login">Login</LinkItem>
