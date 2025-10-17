@@ -1,33 +1,40 @@
 // src/App.jsx
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar.jsx'
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar.jsx";
 
-// Landing & static
-import LandingPage from './pages/LandingPage.jsx'
-import About from './pages/About.jsx'
-import HowItWorks from './pages/HowItWorks.jsx'
-import Login from './pages/Login.jsx'
-import Register from './pages/Register.jsx'
-import NotFound from './pages/NotFound.jsx'
+// Public
+import LandingPage from "./pages/LandingPage.jsx";
+import About from "./pages/About.jsx";
+import HowItWorks from "./pages/HowItWorks.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
-// Dashboards
-import BusinessDashboard from './pages/BusinessDashboard.jsx'
-import ExpertDashboard from './pages/ExpertDashboard.jsx'
+// Business & Expert (existing)
+import BusinessDashboard from "./pages/BusinessDashboard.jsx";
+import ExpertDashboard from "./pages/ExpertDashboard.jsx";
 
-// Consultation (Business)
-import ConsultationHome from './pages/ConsultationHome.jsx'
-import ExpertCatalog from './pages/ExpertCatalog.jsx'
-import Questionnaire from './pages/Questionnaire.jsx'
-import SuggestedExperts from './pages/SuggestedExperts.jsx'
+// Consultation & Labs (existing from prior steps, if present — otherwise keep routes; components can be added later)
+import ConsultationHome from "./pages/ConsultationHome.jsx";
+import ExpertCatalog from "./pages/ExpertCatalog.jsx";
+import Questionnaire from "./pages/Questionnaire.jsx";
+import SuggestedExperts from "./pages/SuggestedExperts.jsx";
+import LabsCatalog from "./pages/LabsCatalog.jsx";
 
-// Labs
-import LabsCatalog from './pages/LabsCatalog.jsx'
+// Booking flow (existing)
+import Booking from "./pages/Booking.jsx";
+import BookingReview from "./pages/BookingReview.jsx";
+import BookingConfirmation from "./pages/BookingConfirmation.jsx";
 
-// Booking flow
-import Booking from './pages/Booking.jsx'
-import BookingReview from './pages/BookingReview.jsx'
-import BookingConfirmation from './pages/BookingConfirmation.jsx'
+// NEW Expert area pages
+import ExpertOnboarding from "./pages/ExpertOnboarding.jsx";
+import ExpertTCNDA from "./pages/ExpertTCNDA.jsx";
+import ExpertAvailability from "./pages/ExpertAvailability.jsx";
+import ExpertApplication from "./pages/ExpertApplication.jsx";
+import ExpertApprovalPending from "./pages/ExpertApprovalPending.jsx";
+import ExpertProfile from "./pages/ExpertProfile.jsx";
+import ExpertOrders from "./pages/ExpertOrders.jsx";
 
 export default function App() {
   return (
@@ -42,17 +49,16 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Dashboards */}
+          {/* Business dashboard */}
           <Route path="/dashboard" element={<BusinessDashboard />} />
-          <Route path="/expert" element={<ExpertDashboard />} />
 
-          {/* Business -> Consultation */}
+          {/* Business → Consultation */}
           <Route path="/dashboard/consultation" element={<ConsultationHome />} />
           <Route path="/dashboard/consultation/browse" element={<ExpertCatalog />} />
           <Route path="/dashboard/consultation/questionnaire" element={<Questionnaire />} />
           <Route path="/dashboard/consultation/suggested" element={<SuggestedExperts />} />
 
-          {/* Business -> Labs */}
+          {/* Business → Labs */}
           <Route path="/dashboard/labs" element={<LabsCatalog />} />
 
           {/* Booking */}
@@ -60,7 +66,17 @@ export default function App() {
           <Route path="/booking/review" element={<BookingReview />} />
           <Route path="/booking/confirmation" element={<BookingConfirmation />} />
 
-          {/* Catch-all */}
+          {/* Expert area */}
+          <Route path="/expert" element={<ExpertDashboard />} />
+          <Route path="/expert/onboarding" element={<ExpertOnboarding />} />
+          <Route path="/expert/terms" element={<ExpertTCNDA />} />
+          <Route path="/expert/availability" element={<ExpertAvailability />} />
+          <Route path="/expert/application" element={<ExpertApplication />} />
+          <Route path="/expert/approval" element={<ExpertApprovalPending />} />
+          <Route path="/expert/profile" element={<ExpertProfile />} />
+          <Route path="/expert/orders" element={<ExpertOrders />} />
+
+          {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -75,5 +91,5 @@ export default function App() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
