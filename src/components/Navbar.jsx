@@ -9,12 +9,12 @@ const linkIdle = "text-gray-700 hover:bg-gray-100";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [role, setRole] = useState(() => sessionStorage.getItem("role"));
+  const [role, setRole] = useState(() => sessionStorage.getItem("role")); // "business" | "expert" | null
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Refresh the role when the route changes (so Navbar reflects latest login state)
   useEffect(() => {
-    // Refresh role on route change to reflect login/logout
     setRole(sessionStorage.getItem("role"));
   }, [location]);
 
@@ -62,10 +62,10 @@ export default function Navbar() {
           <LinkItem to="/how-it-works">How It Works</LinkItem>
           <LinkItem to="/about">About</LinkItem>
 
-          {/* Show Dashboard after login */}
+          {/* Show Dashboard if logged in as business or expert */}
           {role && <LinkItem to={dashboardPath}>Dashboard</LinkItem>}
 
-          {/* Always allow Expert entry (prototype convenience) */}
+          {/* Convenience entry into Expert area (prototype) */}
           <LinkItem to="/expert">Expert</LinkItem>
 
           {!role ? (
@@ -74,9 +74,7 @@ export default function Navbar() {
               <NavLink
                 to="/register"
                 className={({ isActive }) =>
-                  `${linkBase} ${
-                    isActive ? linkActive : "bg-primary text-white hover:opacity-90"
-                  }`
+                  `${linkBase} ${isActive ? linkActive : "bg-primary text-white hover:opacity-90"}`
                 }
                 onClick={() => setOpen(false)}
               >
