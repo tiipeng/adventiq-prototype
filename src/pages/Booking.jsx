@@ -3,8 +3,6 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import SummaryCard from "../components/SummaryCard.jsx";
 import CalendarMock from "../components/CalendarMock.jsx";
-
-// Try to use mock data file; ensure robust fallback
 import { experts as expertsFromData } from "../data/mockData.js";
 
 const TIME_SLOTS = ["09:00", "10:30", "14:00", "16:00"];
@@ -19,9 +17,9 @@ export default function Booking() {
     [experts, expertId]
   );
 
-  // Selected date/time (keep in session to survive navigation)
   const [date, setDate] = useState(() => sessionStorage.getItem("booking_date") || "");
   const [time, setTime] = useState(() => sessionStorage.getItem("booking_time") || "");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     sessionStorage.setItem("booking_expertId", String(expertId || ""));
@@ -30,11 +28,15 @@ export default function Booking() {
   const canContinue = Boolean(date && time && expert);
 
   const onContinue = () => {
-    sessionStorage.setItem("booking_date", date);
-    sessionStorage.setItem("booking_time", time);
-    // clear tier from previous attempts
-    sessionStorage.removeItem("booking_tier");
-    navigate("/booking/review");
+    try {
+      sessionStorage.setItem("booking_date", date);
+      sessionStorage.setItem("booking_time", time);
+      sessionStorage.removeItem("booking_tier");
+      navigate("/booking/review");
+    } catch (e) {
+      console.error(e);
+      setErrorMsg("Could not continue. Please try another selection.");
+    }
   };
 
   if (!expert) {
@@ -64,7 +66,6 @@ export default function Booking() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-2">Booking · Step 1 of 3</div>
 
       <h1 className="text-2xl md:text-3xl font-bold text-primary">Choose a time</h1>
@@ -72,12 +73,28 @@ export default function Booking() {
         Pick a date and time slot for your consultation with {expert.name}.
       </p>
 
+      {errorMsg && (
+        <div className="mt-3 rounded bg-red-50 border border-red-200 text-red-700 px-3 py-2 text-sm">
+          {errorMsg}
+        </div>
+      )}
+
       <div className="mt-6 grid lg:grid-cols-3 gap-6">
-        {/* Left: Calendar + time slots */}
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5">
           <CalendarMock
-            value={date}
-            onChange={(val) => setDate(val?.date || "")}
+            value={date || null}
+            onChange={(val) => {
+              try {
+                const picked = val && typeof val === "object" ? val.date : "";
+                if (picked && typeof picked === "string") {
+                  setDate(picked);
+                  // Clear time if month/day changed (optional UX)
+                  setTime((prev) => prev);
+                }
+              } catch (e) {
+                console.error("Failed to set date:", e);
+              }
+            }}
           />
 
           <div className="mt-5">
@@ -88,6 +105,7 @@ export default function Booking() {
                 return (
                   <button
                     key={t}
+                    type="button"
                     onClick={() => setTime(t)}
                     className={`px-3 py-1.5 rounded-lg border text-sm ${
                       active
@@ -103,7 +121,6 @@ export default function Booking() {
           </div>
         </div>
 
-        {/* Right: Summary */}
         <div className="bg-white border border-gray-200 rounded-xl p-5 h-fit">
           <SummaryCard
             expert={expert}
@@ -113,12 +130,14 @@ export default function Booking() {
 
           <div className="mt-4 flex gap-2">
             <button
+              type="button"
               className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
               onClick={() => navigate(-1)}
             >
               Back
             </button>
             <button
+              type="button"
               className={`px-3 py-1.5 rounded-lg text-white ${
                 canContinue ? "bg-primary hover:opacity-90" : "bg-gray-400 cursor-not-allowed"
               }`}
