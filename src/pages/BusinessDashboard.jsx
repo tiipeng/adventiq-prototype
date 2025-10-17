@@ -2,28 +2,8 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Try to use shared mock data; fall back if not present
-let bookingsFromData = [];
-let reportsFromData = [];
-try {
-  // If your repo uses src/data/mockData.js with these exports, this will work.
-  // Otherwise the fallback below is used.
-  // eslint-disable-next-line import/no-unresolved
-  const md = await import("../data/mockData.js");
-  bookingsFromData = md.bookings || [];
-  reportsFromData = md.reports || [];
-} catch (e) {
-  // Fallbacks to ensure the page renders
-  bookingsFromData = [
-    { id: "bk-1001", expert: "Dr. Jane Bauer", date: "2025-11-06", time: "10:30", status: "confirmed", tier: "Premium", report: false },
-    { id: "bk-1002", expert: "Prof. Alan Smith", date: "2025-11-12", time: "14:00", status: "pending", tier: "Standard", report: false },
-    { id: "bk-1003", expert: "Dr. Linh Nguyen", date: "2025-11-18", time: "09:00", status: "completed", tier: "Premium", report: true },
-  ];
-  reportsFromData = [
-    { id: "rp-501", title: "Consultation Summary — AI in Manufacturing", expert: "Dr. Jane Bauer", date: "2025-10-28" },
-    { id: "rp-502", title: "Materials Fatigue — Initial Findings", expert: "Prof. Alan Smith", date: "2025-10-15" },
-  ];
-}
+// Static import (no top-level await)
+import { bookings as bookingsDataFile, reports as reportsDataFile } from "../data/mockData.js";
 
 const STATUS_BADGE = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -34,16 +14,33 @@ const STATUS_BADGE = {
 
 export default function BusinessDashboard() {
   const navigate = useNavigate();
+
+  // Use imported data or fallbacks so the page always renders
+  const bookingsData = Array.isArray(bookingsDataFile) && bookingsDataFile.length
+    ? bookingsDataFile
+    : [
+        { id: "bk-1001", expert: "Dr. Jane Bauer", date: "2025-11-06", time: "10:30", status: "confirmed", tier: "Premium", report: false },
+        { id: "bk-1002", expert: "Prof. Alan Smith", date: "2025-11-12", time: "14:00", status: "pending", tier: "Standard", report: false },
+        { id: "bk-1003", expert: "Dr. Linh Nguyen", date: "2025-11-18", time: "09:00", status: "completed", tier: "Premium", report: true },
+      ];
+
+  const reportsData = Array.isArray(reportsDataFile) && reportsDataFile.length
+    ? reportsDataFile
+    : [
+        { id: "rp-501", title: "Consultation Summary — AI in Manufacturing", expert: "Dr. Jane Bauer", date: "2025-10-28" },
+        { id: "rp-502", title: "Materials Fatigue — Initial Findings", expert: "Prof. Alan Smith", date: "2025-10-15" },
+      ];
+
   const [filter, setFilter] = useState("All");
 
   const filteredBookings = useMemo(() => {
-    if (filter === "All") return bookingsFromData;
-    return bookingsFromData.filter((b) => b.status.toLowerCase() === filter.toLowerCase());
-  }, [filter]);
+    if (filter === "All") return bookingsData;
+    return bookingsData.filter((b) => b.status.toLowerCase() === filter.toLowerCase());
+  }, [filter, bookingsData]);
 
   const ongoing = useMemo(
-    () => bookingsFromData.filter((b) => ["pending", "confirmed"].includes(b.status)).slice(0, 3),
-    []
+    () => bookingsData.filter((b) => ["pending", "confirmed"].includes(b.status)).slice(0, 3),
+    [bookingsData]
   );
 
   return (
@@ -108,13 +105,14 @@ export default function BusinessDashboard() {
                   {o.status}
                 </span>
               </div>
-              <div className="text-sm text-gray-600 mt-1">{o.date} · {o.time}</div>
+              <div className="text-sm text-gray-600 mt-1">
+                {o.date} · {o.time}
+              </div>
               <div className="text-xs text-gray-500 mt-1">Tier: {o.tier}</div>
               <div className="mt-3 flex gap-2">
                 <button
                   className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
-                  onClick={() => navigate(`/booking/${o.id}`)}
-                  title="Prototype link; booking id differs from expert id"
+                  onClick={() => navigate("/dashboard/consultation/browse")}
                 >
                   View
                 </button>
@@ -190,7 +188,7 @@ export default function BusinessDashboard() {
                     <div className="inline-flex gap-2">
                       <button
                         className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
-                        onClick={() => navigate(`/booking/${b.id}`)}
+                        onClick={() => navigate("/dashboard/consultation/browse")}
                         title="Prototype only"
                       >
                         View
@@ -223,7 +221,7 @@ export default function BusinessDashboard() {
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-primary">My Reports</h2>
         <div className="mt-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reportsFromData.map((r) => (
+          {reportsData.map((r) => (
             <div key={r.id} className="bg-white border border-gray-200 rounded-xl p-4">
               <div className="font-medium text-primary">{r.title}</div>
               <div className="text-sm text-gray-600 mt-1">{r.expert}</div>
@@ -245,7 +243,7 @@ export default function BusinessDashboard() {
               </div>
             </div>
           ))}
-          {!reportsFromData.length && (
+          {!reportsData.length && (
             <div className="sm:col-span-2 lg:col-span-3 bg-white border border-gray-200 rounded-xl p-5 text-sm text-gray-600">
               No reports yet. Your consultation summaries will appear here.
             </div>
