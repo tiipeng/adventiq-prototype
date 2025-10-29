@@ -1,106 +1,111 @@
-// src/pages/LandingPage.jsx
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import SearchBar from "../components/SearchBar.jsx";
-import logo from "../image/logo.png"; // make sure file exists at src/image/logo.png
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function LandingPage() {
   const navigate = useNavigate();
 
-  const handleSelect = (type, payload) => {
-    if (type === "expert") navigate("/dashboard/consultation/browse");
-    else if (type === "lab") navigate("/dashboard/labs");
-    else navigate("/how-it-works");
-    // demo log only
-    // eslint-disable-next-line no-console
-    console.log("Selected from search:", type, payload);
-  };
+  // Simple placeholder language picker; persists to localStorage
+  const [lang, setLang] = useState(() => localStorage.getItem('lang') || 'EN');
+  useEffect(() => {
+    localStorage.setItem('lang', lang);
+  }, [lang]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9FAFB]">
-      {/* Hero Section */}
-      <section className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center">
-          {/* Left: Copy + CTAs */}
-          <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-primary leading-tight">
-              We enable the Fast Forward.
-            </h1>
-            <p className="mt-4 text-gray-600 text-base md:text-lg">
-              Find experts, rent labs, or let AI help you define your next innovation step.
-            </p>
+    <main className="landing-page" style={{ position: 'relative', minHeight: '100vh' }}>
+      {/* Language switcher placeholder at top-right */}
+      <div style={{ position: 'absolute', top: 12, right: 12 }}>
+        <label htmlFor="lang" className="sr-only">Language</label>
+        <select
+          id="lang"
+          value={lang}
+          onChange={(e) => setLang(e.target.value)}
+          aria-label="Language"
+          style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #ddd' }}
+        >
+          <option value="EN">EN</option>
+          <option value="DE">DE</option>
+          <option value="PL">PL</option>
+        </select>
+      </div>
 
-            {/* CTA buttons */}
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="rounded-xl px-4 py-2 bg-primary text-white hover:opacity-90"
-                type="button"
-              >
-                Start Now
-              </button>
-              <button
-                onClick={() => navigate("/dashboard/consultation/browse")}
-                className="rounded-xl px-4 py-2 border border-primary text-primary hover:bg-white"
-                type="button"
-              >
-                Explore Experts
-              </button>
-              <button
-                onClick={() => navigate("/dashboard/labs")}
-                className="rounded-xl px-4 py-2 border border-primary text-primary hover:bg-white"
-                type="button"
-              >
-                Explore Labs
-              </button>
-            </div>
+      {/* Hero / Header */}
+      <section style={{ padding: '72px 20px 24px', textAlign: 'center' }}>
+        <h1 style={{ margin: 0, fontSize: 42, lineHeight: 1.2 }}>AdventIQ</h1>
 
-            {/* Subtle note */}
-            <p className="mt-3 text-xs text-gray-500">
-              AI Assistant is in private beta — mock only.
-            </p>
-          </div>
+        {/* ✅ Updated tagline WITHOUT AI */}
+        <p className="tagline" style={{ marginTop: 12, fontSize: 18, opacity: 0.85 }}>
+          Find experts and rent labs for your next innovation step.
+        </p>
 
-          {/* Right: Illustration / banner */}
-          <div>
-          <div className="rounded-2xl border border-gray-200 bg-white h-72 md:h-96 shadow-sm overflow-hidden">
-            <img
-              src={logo}
-              alt="AdventIQ full banner"
-              className="w-full h-full object-contain p-6"
-            />
-          </div>
-          </div>
-        </div>
+        {/* CTA buttons */}
+        <div className="cta" style={{ marginTop: 24, display: 'flex', gap: 12, justifyContent: 'center' }}>
+          {/* Prefer client-side routing with Link */}
+          <Link to="/dashboard/consultation" className="btn btn-primary" style={btnPrimary}>
+            Start now
+          </Link>
 
-        {/* Central Search */}
-        <div className="max-w-7xl mx-auto px-4">
-          <SearchBar onSelect={handleSelect} />
-          <p className="mt-2 text-xs text-gray-500">Hint: Try “AI”, “Lab”, or “Consulting”.</p>
-        </div>
+          {/* If you prefer programmatic navigation:
+          <button style={btnPrimary} onClick={() => navigate('/dashboard/consultation')}>
+            Start now
+          </button>
+          */}
 
-        {/* How it works */}
-        <div className="max-w-7xl mx-auto px-4 mt-12 mb-16 grid md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-            <h3 className="font-semibold text-primary">1. choose your service</h3>
-            <p className="text-sm text-gray-600 mt-2">
-              Consultation or Labs — pick what you need.
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-            <h3 className="font-semibold text-primary">2. book your expert</h3>
-            <p className="text-sm text-gray-600 mt-2">
-              Browse or get guided suggestions. Reserve a time.
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-            <h3 className="font-semibold text-primary">3. get recommendations / report</h3>
-            <p className="text-sm text-gray-600 mt-2">
-              Receive actionable insights and deliverables.
-            </p>
-          </div>
+          <Link to="/dashboard" className="btn btn-secondary" style={btnSecondary}>
+            Dashboard
+          </Link>
         </div>
       </section>
-    </div>
+
+      {/* Features / Body (placeholder content – keep your existing sections if you have them) */}
+      <section style={{ maxWidth: 1000, margin: '40px auto', padding: '0 20px' }}>
+        <div style={cardsGrid}>
+          <article style={card}>
+            <h3>Find Experts</h3>
+            <p>Connect with vetted experts to accelerate your R&amp;D.</p>
+          </article>
+          <article style={card}>
+            <h3>Rent Labs</h3>
+            <p>Access specialized facilities on demand.</p>
+          </article>
+          <article style={card}>
+            <h3>From Idea to Validation</h3>
+            <p>Plan, execute, and validate your innovation with the right partners.</p>
+          </article>
+        </div>
+      </section>
+    </main>
   );
 }
+
+const btnBase = {
+  display: 'inline-block',
+  padding: '10px 16px',
+  borderRadius: 8,
+  border: '1px solid transparent',
+  fontWeight: 600,
+  textDecoration: 'none',
+  cursor: 'pointer',
+};
+const btnPrimary = {
+  ...btnBase,
+  background: '#111827',
+  color: 'white',
+  borderColor: '#111827',
+};
+const btnSecondary = {
+  ...btnBase,
+  background: 'white',
+  color: '#111827',
+  borderColor: '#D1D5DB',
+};
+const cardsGrid = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+  gap: 16,
+};
+const card = {
+  padding: 16,
+  borderRadius: 12,
+  border: '1px solid #eee',
+  background: 'white',
+};
