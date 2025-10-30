@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../image/logo.png";
 
 export default function Login() {
@@ -9,6 +9,7 @@ export default function Login() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +18,8 @@ export default function Login() {
     try {
       // TODO: call your API
       await new Promise((r) => setTimeout(r, 600));
-      window.location.hash = "#/dashboard";
+      // redirect on success (business default)
+      navigate("/dashboard");
     } catch (e) {
       setErr("Login failed. Please check your credentials and try again.");
     } finally {
@@ -25,11 +27,15 @@ export default function Login() {
     }
   };
 
-  // 🔧 Mock expert login (dev shortcut)
-  const mockExpertLogin = () => {
-    sessionStorage.setItem("mockRole", "expert");
-    // adjust this path if your expert dashboard route differs
-    window.location.hash = "#/dashboard/expert";
+  // ---- Mock shortcuts (like your old file) ----
+  const loginBusinessMock = () => {
+    sessionStorage.setItem("role", "business");
+    navigate("/dashboard");
+  };
+
+  const loginExpertMock = () => {
+    sessionStorage.setItem("role", "expert");
+    navigate("/expert");
   };
 
   return (
@@ -114,16 +120,27 @@ export default function Login() {
           </button>
         </form>
 
-        {/* ---- Mock Expert Login (dev helper) ---- */}
-        <div className="my-3" />
+        {/* Mock shortcuts */}
+        <div className="my-4 text-center text-xs text-gray-400">or</div>
 
-        <button
-          className="w-full rounded-xl px-3 py-2 bg-gray-800 text-white hover:opacity-90"
-          type="button"
-          onClick={mockExpertLogin}
-        >
-          Login as Expert (Mock)
-        </button>
+        <div className="grid grid-cols-1 gap-2">
+          <button
+            type="button"
+            className="w-full rounded-lg bg-primary text-white px-4 py-2 hover:opacity-90"
+            onClick={loginBusinessMock}
+          >
+            Login as Business (mock)
+          </button>
+          <button
+            type="button"
+            className="w-full rounded-lg border px-4 py-2 hover:bg-gray-50"
+            onClick={loginExpertMock}
+          >
+            Login as Expert (mock)
+          </button>
+        </div>
+
+        <p className="text-xs text-gray-500 mt-3">Prototype only — no real authentication.</p>
 
         <p className="mt-4 text-sm text-gray-600">
           No account?{" "}
