@@ -1,69 +1,78 @@
 // src/components/FilterBar.jsx
-import React, { useEffect, useState } from 'react'
+import React, { useState } from "react";
 
-const chipOptions = ['AI', 'Materials', 'Manufacturing', 'Biotech', 'Energy']
-const locations = ['Any', 'Berlin', 'Munich', 'Dresden']
-const prices = ['Any', '€100–€200/h', '€200–€300/h', '€300+/h']
+export default function FilterBar({
+  onChange,
+  extraRightControls, // ✅ new (optional)
+}) {
+  const [q, setQ] = useState("");
+  const [chips] = useState(["AI", "Materials", "Manufacturing", "Biotech", "Energy"]);
+  const [location, setLocation] = useState("Any");
+  const [price, setPrice] = useState("Any");
 
-export default function FilterBar({ onChange }) {
-  const [q, setQ] = useState('')
-  const [tags, setTags] = useState([])
-  const [location, setLocation] = useState(locations[0])
-  const [price, setPrice] = useState(prices[0])
-
-  useEffect(() => {
-    onChange && onChange({ q, tags, location, price })
-  }, [q, tags, location, price, onChange])
-
-  const toggleTag = (t) => {
-    setTags(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])
-  }
+  // bubble minimal state up (kept your original idea)
+  const emit = (next) => onChange?.(next);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-      <div className="flex flex-col md:flex-row md:items-center gap-3">
-        <div className="flex-1">
-          <input
-            className="w-full border rounded-lg px-3 py-2 text-sm"
-            placeholder="Search expertise, keywords…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <select
-            className="border rounded-lg px-3 py-2 text-sm"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          >
-            {locations.map(l => <option key={l}>{l}</option>)}
-          </select>
-          <select
-            className="border rounded-lg px-3 py-2 text-sm"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          >
-            {prices.map(p => <option key={p}>{p}</option>)}
-          </select>
+    <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+      {/* top row: search + selects (left) / extra (right) */}
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          type="text"
+          value={q}
+          onChange={(e) => {
+            setQ(e.target.value);
+            emit({ q: e.target.value, location, price, tags: [] });
+          }}
+          placeholder="Search expertise, keywords..."
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm flex-1 min-w-[260px]"
+        />
+
+        <select
+          value={location}
+          onChange={(e) => {
+            setLocation(e.target.value);
+            emit({ q, location: e.target.value, price, tags: [] });
+          }}
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+        >
+          <option value="Any">Any</option>
+          <option value="DE">DE</option>
+          <option value="CH">CH</option>
+          <option value="PL">PL</option>
+        </select>
+
+        <select
+          value={price}
+          onChange={(e) => {
+            setPrice(e.target.value);
+            emit({ q, location, price: e.target.value, tags: [] });
+          }}
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+        >
+          <option value="Any">Any</option>
+          <option value="lt-200">&lt; 200€/h</option>
+          <option value="200-300">200–300€/h</option>
+          <option value="gt-300">&gt; 300€/h</option>
+        </select>
+
+        {/* ✅ Right side slot so Rating/Language sit inside the same bar */}
+        <div className="ml-auto flex items-center gap-2">
+          {extraRightControls}
         </div>
       </div>
 
+      {/* chips row (kept) */}
       <div className="mt-3 flex flex-wrap gap-2">
-        {chipOptions.map((t) => {
-          const active = tags.includes(t)
-          return (
-            <button
-              key={t}
-              onClick={() => toggleTag(t)}
-              className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                active ? 'bg-[#00B7C2]/10 border-[#00B7C2] text-[#0A2540]' : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-white'
-              }`}
-            >
-              {t}
-            </button>
-          )
-        })}
+        {chips.map((c) => (
+          <span
+            key={c}
+            className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 text-xs"
+          >
+            {c}
+          </span>
+        ))}
       </div>
     </div>
-  )
+  );
 }

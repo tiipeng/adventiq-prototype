@@ -6,38 +6,33 @@ import Modal from "../components/Modal.jsx";
 import FilterBar from "../components/FilterBar.jsx";
 import { experts as expertsDataFile } from "../data/mockData.js";
 
-// Utility to format price if you later switch to numeric hourlyRate
-const fmtCurrency = (val, currency = "EUR") => {
-  if (typeof val === "number") {
-    return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(val);
+// Format currency safely
+const fmtCurrency = (val, currency = "EUR") =>
+  new Intl.NumberFormat(undefined, { style: "currency", currency }).format(val);
+
+// Try to get a numeric hourly rate from various shapes (number, "250", "€250/h")
+const getHourly = (exp) => {
+  if (typeof exp.hourlyRate === "number") return exp.hourlyRate;
+  if (typeof exp.price === "number") return exp.price;
+  if (typeof exp.price === "string") {
+    const m = exp.price.replace(",", ".").match(/(\d+(\.\d+)?)/);
+    if (m) return parseFloat(m[1]);
   }
-  return val || "—";
+  return 0;
 };
 
-// --- Right-side Team Panel (inline component for simplicity) ---
 function TeamPanel({
   team,
   setTeam,
   projectDescription,
   setProjectDescription,
   onSyncCalendars,
-  currency = "EUR",
 }) {
-  // Try to parse numeric hourly price if price is a string like "€250/h"
-  const parseHourly = (member) => {
-    if (typeof member.hourlyRate === "number") return member.hourlyRate;
-    if (typeof member.price === "string") {
-      const m = member.price.match(/(\d+(\.\d+)?)/);
-      return m ? parseFloat(m[1]) : 0;
-    }
-    return 0;
-  };
-
   const total = useMemo(
     () =>
       team.reduce((sum, m) => {
-        const hours = isNaN(m.hours) || m.hours <= 0 ? 0 : m.hours;
-        return sum + hours * parseHourly(m);
+        const h = Number.isFinite(m.hours) ? m.hours : 0;
+        return sum + Math.max(0, h) * getHourly(m);
       }, 0),
     [team]
   );
@@ -45,16 +40,20 @@ function TeamPanel({
   const updateHours = (id, hours) =>
     setTeam((prev) => prev.map((m) => (m.id === id ? { ...m, hours } : m)));
 
-  const removeMember = (id) => setTeam((prev) => prev.filter((m) => m.id !== id));
+  const removeMember = (id) =>
+    setTeam((prev) => prev.filter((m) => m.id !== id));
 
   return (
     <aside className="w-full lg:w-96 shrink-0 bg-white rounded-2xl border border-gray-200 p-5 shadow-sm h-max sticky top-4">
       <h3 className="font-semibold text-primary text-lg">Your team</h3>
-      <p className="text-xs text-gray-500 mt-1">Add experts, set hours, and review total cost.</p>
+      <p className="text-xs text-gray-500 mt-1">
+        Add experts, set hours, and review total cost.
+      </p>
 
-      {/* Team list */}
       <div className="mt-4 space-y-3">
-        {team.length === 0 && <div className="text-sm text-gray-500">No experts added yet.</div>}
+        {team.length === 0 && (
+          <div className="text-sm text-gray-500">No experts added yet.</div>
+        )}
         {team.map((m) => (
           <div
             key={m.id}
@@ -63,7 +62,7 @@ function TeamPanel({
             <div>
               <div className="font-medium text-gray-800">{m.name}</div>
               <div className="text-xs text-gray-500">
-                {fmtCurrency(parseHourly(m), currency)}/h
+                {fmtCurrency(getHourly(m))}/h
               </div>
             </div>
 
@@ -82,7 +81,6 @@ function TeamPanel({
                 className="text-xs text-red-600 hover:underline"
                 onClick={() => removeMember(m.id)}
                 type="button"
-                title="Remove"
               >
                 Remove
               </button>
@@ -91,15 +89,13 @@ function TeamPanel({
         ))}
       </div>
 
-      {/* Cost summary */}
       <div className="mt-4 border-t border-gray-100 pt-4">
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-600">Estimated total</span>
-          <span className="font-semibold">{fmtCurrency(total, currency)}</span>
+          <span className="font-semibold">{fmtCurrency(total)}</span>
         </div>
       </div>
 
-      {/* Project description */}
       {team.length > 0 && (
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700">
@@ -117,13 +113,11 @@ function TeamPanel({
         </div>
       )}
 
-      {/* Actions */}
       <div className="mt-4 space-y-2">
         <button
           className="w-full rounded-xl px-3 py-2 border border-gray-300 text-gray-800 hover:bg-gray-50"
           onClick={onSyncCalendars}
           type="button"
-          title="Placeholder – will be wired later"
         >
           Synchronize calendars (placeholder)
         </button>
@@ -144,8 +138,8 @@ function TeamPanel({
         </button>
 
         <p className="text-[11px] text-gray-500">
-          “Synchronize calendars” is a placeholder. Later we’ll integrate availability and generate
-          a Teams/Meet link based on overlaps.
+          “Synchronize calendars” is a placeholder. Later we’ll integrate availability and create a
+          Teams/Meet link based on overlaps.
         </p>
       </div>
     </aside>
@@ -155,37 +149,47 @@ function TeamPanel({
 export default function ExpertCatalog() {
   const navigate = useNavigate();
 
-  // Use imported mock or fallback
   const experts = useMemo(() => {
     return Array.isArray(expertsDataFile) && expertsDataFile.length
       ? expertsDataFile
       : [
           {
             id: 1,
-            name: "Dr. Jane Bauer",
+            name: "Dr. Jane Doe",
             tags: ["AI", "Manufacturing"],
             price: "€250/h",
             rating: 4.8,
-            location: "Berlin, DE",
+            location: "—",
             availability: ["Mon AM", "Tue PM"],
             bio: "AI for industrial optimization.",
-            // languages: ["EN", "DE"], // <- add to your mockData to enable language filter
+            languages: ["EN", "DE"],
           },
           {
             id: 2,
             name: "Prof. Alan Smith",
             tags: ["Materials", "Energy"],
-            price: "€220/h",
+            price: "220",
             rating: 4.6,
-            location: "Zürich, CH",
+            location: "—",
             availability: ["Wed AM", "Thu PM"],
             bio: "Battery materials specialist.",
-            // languages: ["EN"], // <- add to your mockData to enable language filter
+            languages: ["EN"],
+          },
+          {
+            id: 3,
+            name: "Dr. Linh Nguyen",
+            tags: ["Biotech"],
+            price: 200,
+            rating: 4.7,
+            location: "—",
+            availability: ["Fri AM"],
+            bio: "Cell culture & downstream processing.",
+            languages: ["EN", "PL"],
           },
         ];
   }, []);
 
-  // Existing FilterBar state
+  // Keep your FilterBar state
   const [filterState, setFilterState] = useState({
     q: "",
     tags: [],
@@ -193,19 +197,18 @@ export default function ExpertCatalog() {
     price: "Any",
   });
 
-  // New filters: min rating + language
+  // New: extra filters we’ll render **inside** FilterBar
   const [minRating, setMinRating] = useState("");
   const [language, setLanguage] = useState("");
 
-  // Modal state
+  // Modal
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(null);
 
-  // Team state + project description
+  // Team + project
   const [team, setTeam] = useState([]);
   const [projectDescription, setProjectDescription] = useState("");
 
-  // Actions for Modal
   const onView = (exp) => {
     setActive(exp);
     setOpen(true);
@@ -220,7 +223,6 @@ export default function ExpertCatalog() {
     navigate(`/booking/${exp.id}`);
   };
 
-  // Add to team (no duplicates)
   const onAddToTeam = (exp) => {
     if (!exp) return;
     setTeam((prev) => {
@@ -229,22 +231,20 @@ export default function ExpertCatalog() {
     });
   };
 
-  // Optional simple filter + new rating/language filters
+  // Filters: keep your q filter + add rating/language checks
   const filtered = useMemo(() => {
     const q = (filterState.q || "").toLowerCase();
-
     return experts.filter((e) => {
       const hay = `${e.name || ""} ${e.location || ""} ${(e.tags || []).join(" ")} ${(e.bio || "")}`.toLowerCase();
-      const matchesQuery = hay.includes(q);
+      const matchesQ = hay.includes(q);
 
       const matchesRating =
         !minRating || (typeof e.rating === "number" && e.rating >= parseFloat(minRating));
 
-      const matchesLanguage =
-        !language ||
-        (Array.isArray(e.languages) && e.languages.includes(language));
+      const matchesLang =
+        !language || (Array.isArray(e.languages) && e.languages.includes(language));
 
-      return matchesQuery && matchesRating && matchesLanguage;
+      return matchesQ && matchesRating && matchesLang;
     });
   }, [experts, filterState.q, minRating, language]);
 
@@ -262,67 +262,54 @@ export default function ExpertCatalog() {
         Explore our catalogue. Filters are visual only (prototype).
       </p>
 
-      {/* Top controls */}
-      <div className="mt-5 flex flex-col gap-3">
-        {/* Existing FilterBar (kept) */}
-        <FilterBar onChange={setFilterState} />
+      {/* FilterBar (now with extra controls INSIDE it) */}
+      <div className="mt-5">
+        <FilterBar
+          onChange={setFilterState}
+          extraRightControls={
+            <div className="flex items-center gap-2">
+              <select
+                value={minRating}
+                onChange={(e) => setMinRating(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                title="Minimum rating"
+              >
+                <option value="">Rating</option>
+                <option value="4.0">4.0+</option>
+                <option value="4.5">4.5+</option>
+                <option value="4.8">4.8+</option>
+              </select>
 
-        {/* New: rating + language filters */}
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={minRating}
-            onChange={(e) => setMinRating(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
-            title="Minimum rating"
-          >
-            <option value="">Rating</option>
-            <option value="4.0">4.0+</option>
-            <option value="4.5">4.5+</option>
-            <option value="4.8">4.8+</option>
-          </select>
-
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
-            title="Language"
-          >
-            <option value="">Language</option>
-            <option value="EN">EN</option>
-            <option value="DE">DE</option>
-            <option value="PL">PL</option>
-          </select>
-        </div>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                title="Language"
+              >
+                <option value="">Language</option>
+                <option value="EN">EN</option>
+                <option value="DE">DE</option>
+                <option value="PL">PL</option>
+              </select>
+            </div>
+          }
+        />
       </div>
 
-      {/* Main content: list + team panel */}
+      {/* List + Team Panel */}
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
-        {/* Experts list */}
+        {/* Cards grid */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((e) => (
-            <div key={e.id || e.name} className="space-y-2">
-              {/* Keep your existing ExpertCard with onView/onSelect */}
-              <ExpertCard expert={e} onView={onView} onSelect={onSelect} />
-
-              {/* Short bio snippet under each person */}
-              {e.bio && (
-                <p className="text-xs text-gray-600 line-clamp-2">
-                  {e.bio}
-                </p>
-              )}
-
-              {/* Add to team button */}
-              <div className="flex">
-                <button
-                  className="ml-auto rounded-xl px-3 py-2 bg-primary text-white hover:opacity-90"
-                  type="button"
-                  onClick={() => onAddToTeam(e)}
-                  title="Add expert to team"
-                >
-                  Add to team
-                </button>
-              </div>
-            </div>
+            <ExpertCard
+              key={e.id || e.name}
+              expert={e}
+              onView={onView}
+              onSelect={onSelect}
+              onAddToTeam={() => onAddToTeam(e)} // ✅ button rendered inside the card
+              // Optional: pass hourly so the card can show consistent price
+              hourlyRate={getHourly(e)}
+            />
           ))}
 
           {filtered.length === 0 && (
@@ -332,7 +319,7 @@ export default function ExpertCatalog() {
           )}
         </div>
 
-        {/* Team panel */}
+        {/* Right side */}
         <TeamPanel
           team={team}
           setTeam={setTeam}
@@ -342,14 +329,17 @@ export default function ExpertCatalog() {
         />
       </div>
 
-      {/* Modal with more info (kept) */}
+      {/* Modal (unchanged) */}
       <Modal
         open={open}
         onClose={() => setOpen(false)}
         title={active?.name || "Expert"}
         footer={
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50" onClick={() => setOpen(false)}>
+            <button
+              className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+              onClick={() => setOpen(false)}
+            >
               Close
             </button>
             <button
@@ -369,7 +359,7 @@ export default function ExpertCatalog() {
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div>
               <div className="text-gray-500">Price</div>
-              <div className="font-medium">{active?.price || "€250/h"}</div>
+              <div className="font-medium">{active?.price ?? "—"}</div>
             </div>
             <div>
               <div className="text-gray-500">Rating</div>
@@ -388,12 +378,14 @@ export default function ExpertCatalog() {
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {(active?.tags || []).map((t) => (
-              <span key={t} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs">
+              <span
+                key={t}
+                className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs"
+              >
                 {t}
               </span>
             ))}
           </div>
-          {/* Optionally show languages if present */}
           {Array.isArray(active?.languages) && active.languages.length > 0 && (
             <div className="mt-3 text-xs text-gray-600">
               <span className="text-gray-500">Languages: </span>
