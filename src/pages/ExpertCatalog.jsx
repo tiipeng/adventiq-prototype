@@ -197,7 +197,7 @@ export default function ExpertCatalog() {
     price: "Any",
   });
 
-  // New: extra filters we’ll render **inside** FilterBar
+  // New: extra filters inside FilterBar (lifting state here)
   const [minRating, setMinRating] = useState("");
   const [language, setLanguage] = useState("");
 
@@ -231,7 +231,7 @@ export default function ExpertCatalog() {
     });
   };
 
-  // Filters: keep your q filter + add rating/language checks
+  // Filters: add rating/language checks
   const filtered = useMemo(() => {
     const q = (filterState.q || "").toLowerCase();
     return experts.filter((e) => {
@@ -262,7 +262,7 @@ export default function ExpertCatalog() {
         Explore our catalogue. Filters are visual only (prototype).
       </p>
 
-      {/* FilterBar (now with extra controls INSIDE it) */}
+      {/* FilterBar with extra controls passed in */}
       <div className="mt-5">
         <FilterBar
           onChange={setFilterState}
@@ -296,8 +296,8 @@ export default function ExpertCatalog() {
         />
       </div>
 
-      {/* List + Team Panel */}
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+      {/* Main content */}
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
         {/* Cards grid */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((e) => (
@@ -306,8 +306,7 @@ export default function ExpertCatalog() {
               expert={e}
               onView={onView}
               onSelect={onSelect}
-              onAddToTeam={() => onAddToTeam(e)} // ✅ button rendered inside the card
-              // Optional: pass hourly so the card can show consistent price
+              onAddToTeam={() => onAddToTeam(e)}  // icon button inside card
               hourlyRate={getHourly(e)}
             />
           ))}
@@ -319,7 +318,7 @@ export default function ExpertCatalog() {
           )}
         </div>
 
-        {/* Right side */}
+        {/* Team panel */}
         <TeamPanel
           team={team}
           setTeam={setTeam}
@@ -329,17 +328,14 @@ export default function ExpertCatalog() {
         />
       </div>
 
-      {/* Modal (unchanged) */}
+      {/* Modal */}
       <Modal
         open={open}
         onClose={() => setOpen(false)}
         title={active?.name || "Expert"}
         footer={
           <div className="flex gap-2">
-            <button
-              className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
-              onClick={() => setOpen(false)}
-            >
+            <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50" onClick={() => setOpen(false)}>
               Close
             </button>
             <button
@@ -378,10 +374,7 @@ export default function ExpertCatalog() {
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {(active?.tags || []).map((t) => (
-              <span
-                key={t}
-                className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs"
-              >
+              <span key={t} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs">
                 {t}
               </span>
             ))}
