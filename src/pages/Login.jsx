@@ -1,119 +1,61 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import logo from "../image/logo.png";
+// src/pages/Login.jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [pw, setPw] = useState("");
-  const [show, setShow] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
+  const navigate = useNavigate();
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setErr("");
-    setLoading(true);
-    try {
-      // TODO: call your API
-      await new Promise((r) => setTimeout(r, 600));
-      // redirect on success
-      window.location.hash = "#/dashboard";
-    } catch (e) {
-      setErr("Login failed. Please check your credentials and try again.");
-    } finally {
-      setLoading(false);
-    }
+  const loginBusiness = () => {
+    sessionStorage.setItem("role", "business");
+    navigate("/dashboard");
+  };
+
+  const loginExpert = () => {
+    sessionStorage.setItem("role", "expert");
+    navigate("/expert");
   };
 
   return (
-    <main className="min-h-screen bg-[#F9FAFB] flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <img src={logo} alt="AdventIQ" className="h-8 w-auto" />
-          <h1 className="text-xl font-semibold text-gray-900">Sign in</h1>
-        </div>
+    <div className="max-w-md mx-auto px-4 py-12">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <h1 className="text-2xl font-bold text-primary mb-4">Login</h1>
 
-        {/* SSO */}
-        <div className="grid grid-cols-2 gap-2">
-          <button className="border rounded-lg px-3 py-2 hover:bg-gray-50" type="button" title="Continue with Google">
-            Continue with Google
-          </button>
-          <button className="border rounded-lg px-3 py-2 hover:bg-gray-50" type="button" title="Continue with Microsoft">
-            Continue with Microsoft
-          </button>
-        </div>
+        {/* Mock fields (non-functional) */}
+        <label className="block text-sm text-gray-600 mb-1">Email</label>
+        <input
+          className="w-full border rounded-lg px-3 py-2 mb-3"
+          placeholder="you@company.com"
+          type="email"
+        />
+        <label className="block text-sm text-gray-600 mb-1">Password</label>
+        <input
+          className="w-full border rounded-lg px-3 py-2 mb-4"
+          placeholder="••••••••"
+          type="password"
+        />
 
-        <div className="my-4 flex items-center">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="px-2 text-xs text-gray-500">or</span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
+        {/* Business */}
+        <button
+          className="w-full rounded-lg bg-primary text-white px-4 py-2 hover:opacity-90"
+          onClick={loginBusiness}
+        >
+          Login as Business (mock)
+        </button>
 
-        {/* Email / Password */}
-        <form onSubmit={onSubmit} className="space-y-3">
-          {err && <div className="text-sm text-red-600">{err}</div>}
+        <div className="my-4 text-center text-xs text-gray-400">or</div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2"
-              placeholder="you@company.com"
-            />
-          </div>
+        {/* Expert */}
+        <button
+          className="w-full rounded-lg border px-4 py-2 hover:bg-gray-50"
+          onClick={loginExpert}
+        >
+          Login as Expert (mock)
+        </button>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <div className="mt-1 relative">
-              <input
-                type={show ? "text" : "password"}
-                required
-                autoComplete="current-password"
-                value={pw}
-                onChange={(e) => setPw(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 pr-10"
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-2 text-gray-500 text-sm"
-                onClick={() => setShow((s) => !s)}
-                aria-label={show ? "Hide password" : "Show password"}
-              >
-                {show ? "Hide" : "Show"}
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-              <input type="checkbox" className="rounded border-gray-300" />
-              Remember me
-            </label>
-            <Link to="/forgot" className="text-sm text-primary hover:underline">
-              Forgot password?
-            </Link>
-          </div>
-
-          <button
-            className="w-full rounded-xl px-3 py-2 bg-primary text-white hover:opacity-90 disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? "Signing in…" : "Sign in"}
-          </button>
-        </form>
-
-        <p className="mt-4 text-sm text-gray-600">
-          No account?{" "}
-          <Link to="/register" className="text-primary hover:underline">
-            Create one
-          </Link>
+        <p className="text-xs text-gray-500 mt-3">
+          Prototype only — no real authentication.
         </p>
       </div>
-    </main>
+    </div>
   );
 }
