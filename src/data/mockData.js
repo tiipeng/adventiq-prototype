@@ -2,9 +2,9 @@
 
 // Minimal list used by the original BookingFlow (Step 2 - select expert)
 export const experts = [
-  { id: 1, name: 'Dr. Jane Doe', expertise: 'AI Materials', price: 250, rating: 4.8, photo: 'https://placehold.co/80x80' },
-  { id: 2, name: 'Prof. Alan Smith', expertise: 'Battery Tech', price: 220, rating: 4.6, photo: 'https://placehold.co/80x80' },
-  { id: 3, name: 'Dr. Linh Nguyen', expertise: 'Biotech',      price: 200, rating: 4.7, photo: 'https://placehold.co/80x80' },
+  { id: 1, name: 'Dr. Jane Doe', expertise: 'AI Materials', price: 30, rating: 4.8, photo: 'https://placehold.co/80x80' },
+  { id: 2, name: 'Prof. Alan Smith', expertise: 'Battery Tech', price: 50, rating: 4.6, photo: 'https://placehold.co/80x80' },
+  { id: 3, name: 'Dr. Linh Nguyen', expertise: 'Biotech',      price: 60, rating: 4.7, photo: 'https://placehold.co/80x80' },
 ]
 
 // Minimal lab list (used in earlier UI and future labs flow)
