@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import logo from "../image/logo.png";
 
 const linkBase =
   "px-3 py-2 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent/50";
@@ -27,8 +28,7 @@ export default function Navbar() {
       className="flex items-center gap-2"
       aria-label="AdventIQ home"
     >
-      <div className="w-8 h-8 rounded-lg bg-primary" />
-      <span className="font-bold text-lg text-primary">AdventIQ</span>
+      <img src={logo} alt="AdventIQ" className="h-8 w-auto" />
     </button>
   );
 
