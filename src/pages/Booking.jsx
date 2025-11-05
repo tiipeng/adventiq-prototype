@@ -119,6 +119,24 @@ export default function Booking() {
               })}
             </div>
           </div>
+
+          <div className="mt-6 rounded-xl border border-dashed border-primary/40 bg-primary/5 p-4">
+            <h3 className="font-semibold text-primary">Synchronise calendars</h3>
+            <p className="mt-1 text-sm text-gray-600">
+              After you pick a slot we request acceptance from {expert.name}. Once the expert confirms, invites land in both calendars automatically.
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                alert(
+                  'Calendar sync preview:\n\n1. You request the slot.\n2. Expert accepts or proposes a new time.\n3. AdventIQ sends calendar invites and collaboration links to both parties.'
+                )
+              }
+              className="mt-3 inline-flex items-center gap-2 rounded-lg border border-primary px-3 py-1.5 text-sm font-semibold text-primary hover:bg-white"
+            >
+              Preview sync flow
+            </button>
+          </div>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-5 h-fit">

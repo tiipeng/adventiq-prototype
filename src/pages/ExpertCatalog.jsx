@@ -115,11 +115,11 @@ function TeamPanel({
 
       <div className="mt-4 space-y-2">
         <button
-          className="w-full rounded-xl px-3 py-2 border border-gray-300 text-gray-800 hover:bg-gray-50"
+          className="w-full rounded-xl px-3 py-2 border border-primary/60 text-primary hover:bg-white"
           onClick={onSyncCalendars}
           type="button"
         >
-          Synchronize calendars (placeholder)
+          Preview calendar sync
         </button>
 
         <button
@@ -138,8 +138,7 @@ function TeamPanel({
         </button>
 
         <p className="text-[11px] text-gray-500">
-          “Synchronize calendars” is a placeholder. Later we’ll integrate availability and create a
-          Teams/Meet link based on overlaps.
+          Calendar sync collects availability, requests expert acceptance, and publishes a shared invite. The flow is mocked in this prototype.
         </p>
       </div>
     </aside>
@@ -250,16 +249,16 @@ export default function ExpertCatalog() {
 
   const onSyncCalendars = () => {
     alert(
-      "Calendar sync is a placeholder.\n\nFuture flow:\n• Collect availability from each expert\n• Compute overlaps\n• Propose options and create a Teams/Meet link"
+      "Calendar sync preview:\n\n• Collect availability from every selected expert\n• Ask the expert to accept or counter-propose\n• Publish a shared invite with conferencing details"
     );
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="text-sm text-gray-500 mb-2">Dashboard / Consultation</div>
-      <h1 className="text-2xl md:text-3xl font-bold text-primary">Browse Experts</h1>
-      <p className="text-gray-600 mt-2">
-        Explore our catalogue. Filters are visual only (prototype).
+      <h1 className="text-2xl md:text-3xl font-bold text-primary">Fast consultation experts</h1>
+      <p className="text-gray-600 mt-2 max-w-3xl text-sm md:text-base">
+        Compare focus areas, see the headline description, and check ratings in one view. Select an expert to reserve a time slot and trigger the calendar sync request.
       </p>
 
       {/* FilterBar with extra controls passed in */}
