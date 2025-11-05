@@ -2,9 +2,39 @@
 
 // Minimal list used by the original BookingFlow (Step 2 - select expert)
 export const experts = [
-  { id: 1, name: 'Dr. Jane Doe', expertise: 'AI Materials', price: 30, rating: 4.8, photo: 'https://placehold.co/80x80' },
-  { id: 2, name: 'Prof. Alan Smith', expertise: 'Battery Tech', price: 50, rating: 4.6, photo: 'https://placehold.co/80x80' },
-  { id: 3, name: 'Dr. Linh Nguyen', expertise: 'Biotech',      price: 60, rating: 4.7, photo: 'https://placehold.co/80x80' },
+  {
+    id: 1,
+    name: 'Dr. Jane Doe',
+    expertise: 'AI Materials',
+    tags: ['AI Materials', 'Microscopy'],
+    price: 30,
+    rating: 4.8,
+    photo: 'https://placehold.co/80x80',
+    headline: 'Accelerates AI-guided materials discovery for faster R&D iteration.',
+    bio: 'Former PI at TU Berlin specialising in computer vision for materials. 10+ years translating research into industrial deployment.',
+  },
+  {
+    id: 2,
+    name: 'Prof. Alan Smith',
+    expertise: 'Battery Tech',
+    tags: ['Battery Tech', 'Degradation'],
+    price: 50,
+    rating: 4.6,
+    photo: 'https://placehold.co/80x80',
+    headline: 'Designs battery validation programs that shorten certification cycles.',
+    bio: 'Ex-ETH researcher with a focus on lithium-ion lifetime modelling and field deployment testing for mobility and grid storage.',
+  },
+  {
+    id: 3,
+    name: 'Dr. Linh Nguyen',
+    expertise: 'Biotech',
+    tags: ['Biotech', 'Assays'],
+    price: 60,
+    rating: 4.7,
+    photo: 'https://placehold.co/80x80',
+    headline: 'Builds assay roadmaps to de-risk biotech product launches.',
+    bio: 'Biotech specialist experienced in assay design, validation, and tech transfer for diagnostics start-ups across the EU.',
+  },
 ]
 
 // Minimal lab list (used in earlier UI and future labs flow)
