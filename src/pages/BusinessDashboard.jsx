@@ -19,38 +19,73 @@ export default function BusinessDashboard() {
   const [activeKey, setActiveKey] = useState("dashboard");
 
   // Use imported bookings or a safe fallback so the page always renders
-  const bookingsData =
-    Array.isArray(bookingsDataFile) && bookingsDataFile.length
-      ? bookingsDataFile
-      : [
-          {
-            id: "bk-1001",
-            expert: "Dr. Jane Bauer",
-            date: "2025-11-06",
-            time: "10:30",
-            status: "confirmed",
-            tier: "Premium",
-            report: false,
-          },
-          {
-            id: "bk-1002",
-            expert: "Prof. Alan Smith",
-            date: "2025-11-12",
-            time: "14:00",
-            status: "pending",
-            tier: "Standard",
-            report: false,
-          },
-          {
-            id: "bk-1003",
-            expert: "Dr. Linh Nguyen",
-            date: "2025-11-18",
-            time: "09:00",
-            status: "completed",
-            tier: "Premium",
-            report: true,
-          },
-        ];
+  const fallbackBookings = [
+    {
+      id: "bk-1001",
+      expert: "Dr. Jane Bauer",
+      date: "2025-11-06",
+      time: "10:30",
+      status: "confirmed",
+      tier: "Premium",
+      report: false,
+    },
+    {
+      id: "bk-1002",
+      expert: "Prof. Alan Smith",
+      date: "2025-11-12",
+      time: "14:00",
+      status: "pending",
+      tier: "Standard",
+      report: false,
+    },
+    {
+      id: "bk-1003",
+      expert: "Dr. Linh Nguyen",
+      date: "2025-11-18",
+      time: "09:00",
+      status: "completed",
+      tier: "Premium",
+      report: true,
+    },
+  ];
+
+  const bookingsData = useMemo(() => {
+    if (!Array.isArray(bookingsDataFile) || !bookingsDataFile.length) {
+      return fallbackBookings;
+    }
+
+    const STATUS_MAP = {
+      pending: "pending",
+      confirmed: "confirmed",
+      completed: "completed",
+      scheduled: "confirmed",
+      accepted: "confirmed",
+      draft: "pending",
+      cancelled: "canceled",
+      canceled: "canceled",
+    };
+
+    return bookingsDataFile.map((item, index) => {
+      const rawStatus = typeof item.status === "string" ? item.status.toLowerCase() : "pending";
+      const status = STATUS_MAP[rawStatus] || "pending";
+
+      return {
+        id: item.id || `booking-${index + 1}`,
+        expert: item.expert || item.target || "Assigned expert pending",
+        date: item.date || item.startDate || "TBD",
+        time: item.time || item.startTime || "—",
+        status,
+        tier:
+          item.tier ||
+          (item.type === "Lab"
+            ? "Lab session"
+            : status === "confirmed" || status === "completed"
+            ? "Premium"
+            : "Standard"),
+        report: Boolean(item.report),
+      };
+    });
+  }, [bookingsDataFile]);
 
   // Local fallback for reports (since mockData.js doesn't export reports)
   const reportsData = [
