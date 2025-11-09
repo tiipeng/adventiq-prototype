@@ -176,13 +176,11 @@ export const labs = [
 ]
 
 // Bookings used by BusinessDashboard / ExpertDashboard tables
-// src/data/mockData.js — bookings array
 export const bookings = [
-  { id: 'B-2310', type: 'Expert', target: 'Dr. Aya Nakamura',  date: '2025-11-12', status: 'Confirmed', report: 'Metrology Prep Notes' },
-  { id: 'B-2311', type: 'Lab',    target: 'Battery Testing Lab', date: '2025-11-14', status: 'Pending',   report: null },
-  { id: 'B-2312', type: 'Expert', target: 'Dr. Zanele Ndlovu',  date: '2025-11-19', status: 'Completed', report: 'Microgrid Rollout Plan' },
-];
-
+  { id: 'B-1001', type: 'Expert', target: 'Dr. Amara Igbokwe',   date: '2025-10-28', status: 'Pending',   report: null },
+  { id: 'B-1002', type: 'Lab',    target: 'AI Materials Lab',    date: '2025-11-03', status: 'Confirmed', report: 'Consultation Summary' },
+  { id: 'B-1003', type: 'Expert', target: 'Prof. Mateo Rinaldi', date: '2025-11-07', status: 'Scheduled', report: null },
+]
 
 // Richer expert profiles used by the new Experts Catalog / Detail pages
 export const expertProfiles = [
@@ -451,5 +449,3 @@ export const expertServices = [
   { id: 501, expertId: 8, title: 'Metrology Roadmap Review',      hours: 2, pricePerHour: 260 },
   { id: 601, expertId: 15, title: 'Microgrid Financial Model',    hours: 5, pricePerHour: 225 },
 ]
-
-
