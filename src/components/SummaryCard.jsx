@@ -36,7 +36,12 @@ export default function SummaryCard({ expert, dateTime, tier }) {
   const name = expert?.name || "Expert";
   const location = expert?.location || "—";
   const tags = normalizeTags(expert?.tags);
-  const base = parsePriceToNumber(expert?.price) || 250; // fallback base
+  const directHourly =
+    typeof expert?.hourlyRate === "number" && !Number.isNaN(expert.hourlyRate)
+      ? expert.hourlyRate
+      : null;
+  const resolvedBase = directHourly ?? parsePriceToNumber(expert?.price);
+  const base = resolvedBase || 250; // fallback base
   const isPremium = tier === "premium";
   const uplift = isPremium ? 150 : 0; // mock uplift for premium
   const total = base + uplift;

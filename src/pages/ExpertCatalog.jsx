@@ -239,8 +239,9 @@ function FlowDialog({
         body: (
           <div className="space-y-4 text-sm text-gray-700">
             <p>
-              Great! The request is queued for your experts. They can approve, counter, or decline directly from their AdventIQ
-              workspace.
+              Great! Next you will complete the consultation brief so experts know the topic, sector, and supporting material.
+              After that the request is queued for review where experts can approve, counter, or decline directly from their
+              AdventIQ workspace.
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>Each expert sees the brief, proposed slot, and payment summary.</li>
@@ -312,7 +313,7 @@ function FlowDialog({
                 className="px-4 py-1.5 rounded-lg bg-primary text-white text-sm hover:opacity-90"
                 onClick={onFinish}
               >
-                View approval queue
+                Fill consultation details
               </button>
             ) : (
               <button
@@ -437,6 +438,30 @@ export default function ExpertCatalog() {
   }, [experts, filterState.q, minRating, language]);
 
   const startFlow = ({ team: flowTeam = [], projectDescription: desc = "" }) => {
+    const normalizedTeam = flowTeam.map((member) => ({
+      id: member.id,
+      name: member.name,
+      hourlyRate: getHourly(member),
+      tags: member.tags || [],
+      location: member.location || "",
+      rating: member.rating,
+      price: member.price,
+      availability: member.availability || [],
+      hours: Number.isFinite(member.hours) ? Number(member.hours) : 1,
+    }));
+
+    try {
+      sessionStorage.setItem("consultation_team", JSON.stringify(normalizedTeam));
+      sessionStorage.setItem("consultation_projectDescription", desc || "");
+      const estimatedTotal = normalizedTeam.reduce(
+        (sum, member) => sum + (member.hourlyRate || 0) * (member.hours || 1),
+        0
+      );
+      sessionStorage.setItem("consultation_estimatedTotal", String(estimatedTotal));
+    } catch (error) {
+      console.warn("Failed to persist consultation prefill", error);
+    }
+
     setFlowSnapshot({
       team: flowTeam.map((member) => ({ ...member })),
       projectDescription: desc,
@@ -451,7 +476,7 @@ export default function ExpertCatalog() {
 
   const finishFlow = () => {
     setFlowOpen(false);
-    navigate("/dashboard");
+    navigate("/dashboard/consultation/details");
   };
 
   return (

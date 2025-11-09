@@ -20,6 +20,30 @@ export default function BookingReview() {
     [experts, expertId]
   );
 
+  const consultationTopic = sessionStorage.getItem("consultation_topic") || "";
+  const consultationSector = sessionStorage.getItem("consultation_sector") || "";
+  const consultationProblemArea = sessionStorage.getItem("consultation_problemArea") || "";
+  const consultationExpectations = sessionStorage.getItem("consultation_expectations") || "";
+  const consultationDuration = (() => {
+    const stored = parseFloat(sessionStorage.getItem("consultation_duration"));
+    return Number.isFinite(stored) ? stored : null;
+  })();
+  const consultationLeaderIncluded = sessionStorage.getItem("consultation_leader") === "true";
+  const consultationTotal = (() => {
+    const stored = parseFloat(sessionStorage.getItem("consultation_estimatedTotal"));
+    return Number.isFinite(stored) ? stored : null;
+  })();
+  const consultationAttachments = useMemo(() => {
+    try {
+      const raw = sessionStorage.getItem("consultation_attachments");
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.warn("Unable to parse consultation attachments", error);
+      return [];
+    }
+  }, []);
+
   // Local tier & notes state (persist in session, UI-only)
   const [tier, setTier] = useState(() => sessionStorage.getItem("booking_tier") || "standard");
   const [notes, setNotes] = useState(() => sessionStorage.getItem("booking_notes") || "");
@@ -88,6 +112,62 @@ export default function BookingReview() {
         {/* Right: Summary */}
         <div className="bg-white border border-gray-200 rounded-xl p-5 h-fit">
           <SummaryCard expert={expert} dateTime={`${date} · ${time}`} tier={tier} />
+
+          {(consultationTopic || consultationSector || consultationProblemArea || consultationAttachments.length) && (
+            <div className="mt-4 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-2">
+              <h3 className="font-semibold text-primary text-sm uppercase tracking-wide">Consultation brief</h3>
+              {consultationTopic && (
+                <div>
+                  <span className="text-gray-500">Topic:</span> {consultationTopic}
+                </div>
+              )}
+              {consultationSector && (
+                <div>
+                  <span className="text-gray-500">Sector:</span> {consultationSector}
+                </div>
+              )}
+              {consultationProblemArea && (
+                <div>
+                  <span className="text-gray-500">Problem area:</span> {consultationProblemArea}
+                </div>
+              )}
+              {consultationDuration && (
+                <div>
+                  <span className="text-gray-500">Duration:</span> {consultationDuration.toFixed(1)} h
+                </div>
+              )}
+              <div>
+                <span className="text-gray-500">AdventIQ Leader:</span> {consultationLeaderIncluded ? "Included" : "Not added"}
+              </div>
+              {consultationExpectations && (
+                <div className="text-gray-600 whitespace-pre-wrap border-t border-gray-100 pt-2 text-xs">
+                  {consultationExpectations}
+                </div>
+              )}
+              {consultationAttachments.length > 0 && (
+                <div className="text-xs text-gray-600 border-t border-gray-100 pt-2 space-y-1">
+                  <div className="font-semibold text-gray-700">Attachments</div>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {consultationAttachments.map((file) => (
+                      <li key={file.name}>{file.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {consultationTotal != null && (
+            <div className="mt-4 rounded-xl border border-primary/40 bg-primary/5 px-4 py-3 text-sm text-[#0A2540] space-y-1">
+              <div className="flex items-center justify-between font-semibold">
+                <span>Estimated total</span>
+                <span>€{consultationTotal.toFixed(2)}</span>
+              </div>
+              <p className="text-xs text-[#0A2540]/80">
+                Live session total based on the consultation brief. Final invoice is issued after expert confirmation.
+              </p>
+            </div>
+          )}
 
           <div className="mt-4 flex gap-2">
             <button

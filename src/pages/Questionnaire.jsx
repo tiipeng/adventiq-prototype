@@ -21,6 +21,12 @@ export default function Questionnaire() {
   const back = () => setCurrent((c) => Math.max(c - 1, 0))
 
   const submit = () => {
+    try {
+      sessionStorage.setItem('consultation_questionnaire', JSON.stringify(answers))
+    } catch (error) {
+      console.warn('Unable to persist questionnaire answers', error)
+    }
+
     // UI-only: just navigate to suggested
     navigate('/dashboard/consultation/suggested')
   }
