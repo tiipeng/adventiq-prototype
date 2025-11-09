@@ -1,26 +1,25 @@
 // src/components/FilterBar.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function FilterBar({ onChange }) {
-  const [q, setQ] = useState("");
+export default function FilterBar({ onChange, extraRightControls }) {
   const [chips] = useState(["AI", "Materials", "Manufacturing", "Biotech", "Energy"]);
+  const [filters, setFilters] = useState({
+    q: "",
+    location: "Any",
+    price: "Any",
+  });
 
-  // unified filter state
-  const [minRating, setMinRating] = useState("");
-  const [language, setLanguage] = useState("");
-  const [location, setLocation] = useState("Any");
-  const [price, setPrice] = useState("Any");
+  useEffect(() => {
+    onChange?.({ q: "", location: "Any", price: "Any", tags: [] });
+  }, [onChange]);
 
-  const emit = (next = {}) =>
-    onChange?.({
-      q,
-      minRating,
-      language,
-      location,
-      price,
-      ...next,
-      tags: [], // keep prototype behavior
+  const update = (next) => {
+    setFilters((prev) => {
+      const merged = { ...prev, ...next };
+      onChange?.({ ...merged, tags: [] });
+      return merged;
     });
+  };
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
@@ -28,54 +27,16 @@ export default function FilterBar({ onChange }) {
         {/* Search */}
         <input
           type="text"
-          value={q}
-          onChange={(e) => {
-            setQ(e.target.value);
-            emit({ q: e.target.value });
-          }}
+          value={filters.q}
+          onChange={(e) => update({ q: e.target.value })}
           placeholder="Search expertise, keywords..."
           className="border border-gray-300 rounded-md px-3 py-2 text-sm flex-1 min-w-[260px]"
         />
 
-        {/* Rating */}
-        <select
-          value={minRating}
-          onChange={(e) => {
-            setMinRating(e.target.value);
-            emit({ minRating: e.target.value });
-          }}
-          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
-          title="Rating"
-        >
-          <option value="">Rating</option>
-          <option value="4.0">4.0+</option>
-          <option value="4.5">4.5+</option>
-          <option value="4.8">4.8+</option>
-        </select>
-
-        {/* Language (only once ✅) */}
-        <select
-          value={language}
-          onChange={(e) => {
-            setLanguage(e.target.value);
-            emit({ language: e.target.value });
-          }}
-          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
-          title="Language"
-        >
-          <option value="">Language</option>
-          <option value="EN">EN</option>
-          <option value="DE">DE</option>
-          <option value="PL">PL</option>
-        </select>
-
         {/* Location */}
         <select
-          value={location}
-          onChange={(e) => {
-            setLocation(e.target.value);
-            emit({ location: e.target.value });
-          }}
+          value={filters.location}
+          onChange={(e) => update({ location: e.target.value })}
           className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           title="Location"
         >
@@ -87,11 +48,8 @@ export default function FilterBar({ onChange }) {
 
         {/* Price (label says Price, not Any ✅) */}
         <select
-          value={price}
-          onChange={(e) => {
-            setPrice(e.target.value);
-            emit({ price: e.target.value });
-          }}
+          value={filters.price}
+          onChange={(e) => update({ price: e.target.value })}
           className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           title="Price"
         >
@@ -100,6 +58,10 @@ export default function FilterBar({ onChange }) {
           <option value="200-300">200–300€/h</option>
           <option value="gt-300">&gt; 300€/h</option>
         </select>
+
+        {extraRightControls && (
+          <div className="flex items-center gap-2">{extraRightControls}</div>
+        )}
       </div>
 
       {/* Chips (visual only) */}
