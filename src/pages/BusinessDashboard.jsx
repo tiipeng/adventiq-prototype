@@ -19,38 +19,73 @@ export default function BusinessDashboard() {
   const [activeKey, setActiveKey] = useState("dashboard");
 
   // Use imported bookings or a safe fallback so the page always renders
-  const bookingsData =
-    Array.isArray(bookingsDataFile) && bookingsDataFile.length
-      ? bookingsDataFile
-      : [
-          {
-            id: "bk-1001",
-            expert: "Dr. Jane Bauer",
-            date: "2025-11-06",
-            time: "10:30",
-            status: "confirmed",
-            tier: "Premium",
-            report: false,
-          },
-          {
-            id: "bk-1002",
-            expert: "Prof. Alan Smith",
-            date: "2025-11-12",
-            time: "14:00",
-            status: "pending",
-            tier: "Standard",
-            report: false,
-          },
-          {
-            id: "bk-1003",
-            expert: "Dr. Linh Nguyen",
-            date: "2025-11-18",
-            time: "09:00",
-            status: "completed",
-            tier: "Premium",
-            report: true,
-          },
-        ];
+  const fallbackBookings = [
+    {
+      id: "bk-1001",
+      expert: "Dr. Jane Bauer",
+      date: "2025-11-06",
+      time: "10:30",
+      status: "confirmed",
+      tier: "Premium",
+      report: false,
+    },
+    {
+      id: "bk-1002",
+      expert: "Prof. Alan Smith",
+      date: "2025-11-12",
+      time: "14:00",
+      status: "pending",
+      tier: "Standard",
+      report: false,
+    },
+    {
+      id: "bk-1003",
+      expert: "Dr. Linh Nguyen",
+      date: "2025-11-18",
+      time: "09:00",
+      status: "completed",
+      tier: "Premium",
+      report: true,
+    },
+  ];
+
+  const bookingsData = useMemo(() => {
+    if (!Array.isArray(bookingsDataFile) || !bookingsDataFile.length) {
+      return fallbackBookings;
+    }
+
+    const STATUS_MAP = {
+      pending: "pending",
+      confirmed: "confirmed",
+      completed: "completed",
+      scheduled: "confirmed",
+      accepted: "confirmed",
+      draft: "pending",
+      cancelled: "canceled",
+      canceled: "canceled",
+    };
+
+    return bookingsDataFile.map((item, index) => {
+      const rawStatus = typeof item.status === "string" ? item.status.toLowerCase() : "pending";
+      const status = STATUS_MAP[rawStatus] || "pending";
+
+      return {
+        id: item.id || `booking-${index + 1}`,
+        expert: item.expert || item.target || "Assigned expert pending",
+        date: item.date || item.startDate || "TBD",
+        time: item.time || item.startTime || "—",
+        status,
+        tier:
+          item.tier ||
+          (item.type === "Lab"
+            ? "Lab session"
+            : status === "confirmed" || status === "completed"
+            ? "Premium"
+            : "Standard"),
+        report: Boolean(item.report),
+      };
+    });
+  }, [bookingsDataFile]);
 
   // Local fallback for reports (since mockData.js doesn't export reports)
   const reportsData = [
@@ -203,13 +238,22 @@ export default function BusinessDashboard() {
                     {o.date} · {o.time}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">Tier: {o.tier}</div>
-                  <div className="mt-3 flex gap-2">
-                    <button
-                      className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
-                      onClick={() => navigate("/dashboard/consultation/browse")}
-                    >
-                      View
-                    </button>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {o.status === "confirmed" ? (
+                      <button
+                        className="px-3 py-1.5 rounded-lg bg-primary text-white text-sm hover:bg-primary/90"
+                        onClick={() => navigate("/dashboard/session/live")}
+                      >
+                        Open session room
+                      </button>
+                    ) : (
+                      <button
+                        className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
+                        onClick={() => navigate("/dashboard/consultation/browse")}
+                      >
+                        View request
+                      </button>
+                    )}
                     <button
                       className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
                       onClick={() => navigate("/dashboard/consultation/browse")}
@@ -368,7 +412,7 @@ export default function BusinessDashboard() {
                       </td>
                       <td className="px-4 py-3">{b.report ? "Ready" : "—"}</td>
                       <td className="px-4 py-3 text-right">
-                        <div className="inline-flex gap-2">
+                        <div className="inline-flex flex-wrap gap-2 justify-end">
                           <button
                             className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
                             onClick={() => navigate("/dashboard/consultation/browse")}
@@ -376,6 +420,30 @@ export default function BusinessDashboard() {
                           >
                             View
                           </button>
+                          {b.status === "confirmed" && (
+                            <button
+                              className="px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary/90"
+                              onClick={() => navigate("/dashboard/session/live")}
+                            >
+                              Join session
+                            </button>
+                          )}
+                          {b.status === "completed" && (
+                            <>
+                              <button
+                                className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+                                onClick={() => navigate("/dashboard/report/review")}
+                              >
+                                Review report
+                              </button>
+                              <button
+                                className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
+                                onClick={() => navigate("/dashboard/session/completion")}
+                              >
+                                Finalize
+                              </button>
+                            </>
+                          )}
                           {b.status !== "completed" && (
                             <button
                               className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
@@ -412,7 +480,7 @@ export default function BusinessDashboard() {
                   <div className="mt-3 flex gap-2">
                     <button
                       className="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
-                      onClick={() => alert("Opening report (prototype)")}
+                      onClick={() => navigate("/dashboard/report/review")}
                     >
                       View Report
                     </button>
