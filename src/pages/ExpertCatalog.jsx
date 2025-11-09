@@ -451,7 +451,7 @@ export default function ExpertCatalog() {
 
   const finishFlow = () => {
     setFlowOpen(false);
-    navigate("/expert/orders");
+    navigate("/dashboard");
   };
 
   return (
