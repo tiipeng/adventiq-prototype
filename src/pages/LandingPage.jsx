@@ -78,8 +78,6 @@ const experts = [
   },
 ];
 
-const logos = ["Ionis", "NeuroPulse", "Helixion", "FluxLabs", "NovaThera"];
-
 const howItWorks = [
   {
     title: "Choose expert",
@@ -554,13 +552,6 @@ export default function LandingPage() {
               <p className="text-base font-semibold text-slate-900">Teams trust AdventIQ to ship faster:</p>
               <p>“Our MDR dossier cleared on the first pass. AdventIQ’s experts kept the review on pace with zero surprises.”</p>
               <p className="font-semibold text-slate-900">— Sofia, Head of Quality @ NovaThera</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              {logos.map((logo) => (
-                <div key={logo} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-center text-slate-500">
-                  {logo}
-                </div>
-              ))}
             </div>
           </div>
         </section>
