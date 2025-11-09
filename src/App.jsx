@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 
 // Public
@@ -37,9 +37,12 @@ import ExpertProfile from "./pages/ExpertProfile.jsx";
 import ExpertOrders from "./pages/ExpertOrders.jsx";
 
 export default function App() {
+  const location = useLocation();
+  const hideChrome = location.pathname === "/" || location.pathname === "";
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      {!hideChrome && <Navbar />}
       <main className="flex-1">
         <Routes>
           {/* Public */}
@@ -80,16 +83,18 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <footer className="border-t bg-white">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between text-sm text-gray-500">
-          <span>© {new Date().getFullYear()} AdventIQ</span>
-          <div className="flex gap-4">
-            <button className="hover:text-primary">Privacy</button>
-            <button className="hover:text-primary">Terms</button>
-            <button className="hover:text-primary">Contact</button>
+      {!hideChrome && (
+        <footer className="border-t bg-white">
+          <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between text-sm text-gray-500">
+            <span>© {new Date().getFullYear()} AdventIQ</span>
+            <div className="flex gap-4">
+              <button className="hover:text-primary">Privacy</button>
+              <button className="hover:text-primary">Terms</button>
+              <button className="hover:text-primary">Contact</button>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }
