@@ -24,6 +24,7 @@ import ExpertCatalog from "./pages/ExpertCatalog.jsx";
 import Questionnaire from "./pages/Questionnaire.jsx";
 import SuggestedExperts from "./pages/SuggestedExperts.jsx";
 import LabsCatalog from "./pages/LabsCatalog.jsx";
+import ConsultationDetails from "./pages/ConsultationDetails.jsx";
 
 // Booking flow (existing)
 import Booking from "./pages/Booking.jsx";
@@ -64,6 +65,7 @@ export default function App() {
           {/* Business → Consultation */}
           <Route path="/dashboard/consultation" element={<ConsultationHome />} />
           <Route path="/dashboard/consultation/browse" element={<ExpertCatalog />} />
+          <Route path="/dashboard/consultation/details" element={<ConsultationDetails />} />
           <Route path="/dashboard/consultation/questionnaire" element={<Questionnaire />} />
           <Route path="/dashboard/consultation/suggested" element={<SuggestedExperts />} />
 
