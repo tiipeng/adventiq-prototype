@@ -137,13 +137,6 @@ export default function LandingPage() {
                     </button>
                   </div>
                 </div>
-                <div className="absolute -bottom-6 -left-6 hidden lg:block">
-                  <div className="rounded-2xl bg-white/70 backdrop-blur shadow-lg border border-gray-100 px-6 py-4">
-                    <p className="text-xs text-gray-500">Service rating</p>
-                    <p className="text-lg font-semibold text-gray-900">4.9 / 5</p>
-                    <p className="text-xs text-gray-500">Based on 230+ consultations</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
