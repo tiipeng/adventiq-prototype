@@ -267,13 +267,6 @@ export default function LandingPage() {
                   4.8 average from <span className="font-bold">1,200+</span> reviews
                 </span>
               </div>
-              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                {logos.map((logo) => (
-                  <span key={logo} className="rounded-md border border-slate-200 bg-white px-3 py-2 text-slate-500">
-                    {logo}
-                  </span>
-                ))}
-              </div>
             </div>
             <div className="flex flex-wrap gap-3" role="group" aria-label="Primary actions">
               <a
