@@ -39,7 +39,6 @@ import ExpertApplication from "./pages/ExpertApplication.jsx";
 import ExpertApprovalPending from "./pages/ExpertApprovalPending.jsx";
 import ExpertProfile from "./pages/ExpertProfile.jsx";
 import ExpertOrders from "./pages/ExpertOrders.jsx";
-import ExpertFlow from "./pages/ExpertFlow.jsx";
 
 export default function App() {
   const location = useLocation();
@@ -87,7 +86,6 @@ export default function App() {
           <Route path="/expert/approval" element={<ExpertApprovalPending />} />
           <Route path="/expert/profile" element={<ExpertProfile />} />
           <Route path="/expert/orders" element={<ExpertOrders />} />
-          <Route path="/expert/flow" element={<ExpertFlow />} />
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
