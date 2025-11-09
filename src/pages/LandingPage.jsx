@@ -209,13 +209,13 @@ export default function LandingPage() {
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1 text-sm font-semibold text-primary">
               <span aria-hidden="true">⚡</span>
-              Fast-tracked expert guidance for hardware, biotech, and medtech teams
+              On-demand experts for deeptech, medtech, and scale-up teams
             </div>
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Find and book the right specialist in under 48 hours.
+              Book the specialist who ships answers before your next sprint review.
             </h1>
             <p className="max-w-xl text-lg text-slate-600">
-              AdventIQ connects R&D, product, and regulatory leaders with vetted experts who unblock critical decisions and deliver next steps you can act on immediately.
+              AdventIQ pairs product, R&amp;D, and regulatory leaders with vetted scientists, operators, and advisors who translate challenges into concrete experiments, documentation, and next steps.
             </p>
             <div
               role="search"
@@ -251,6 +251,7 @@ export default function LandingPage() {
                 <button
                   type="submit"
                   className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  aria-label="Browse experts"
                 >
                   Browse experts
                 </button>
@@ -278,12 +279,14 @@ export default function LandingPage() {
               <a
                 href="#experts"
                 className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                aria-label="Browse featured experts"
               >
                 Browse experts
               </a>
               <a
                 href="/questionnaire"
                 className="inline-flex items-center justify-center rounded-xl border border-primary px-5 py-3 text-sm font-semibold text-primary transition hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                aria-label="Get help choosing an expert"
               >
                 Help me choose
               </a>
@@ -342,14 +345,14 @@ export default function LandingPage() {
           <h2 id="paths" className="sr-only">
             Choose your path
           </h2>
-          <article className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-within:-translate-y-1 focus-within:shadow-lg" tabIndex={-1}>
+          <article className="flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md focus-within:ring-2 focus-within:ring-primary/30" tabIndex={-1}>
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary" aria-hidden="true">
               <span className="text-2xl">🔍</span>
             </div>
             <div className="space-y-2">
               <h3 className="text-xl font-semibold text-slate-900">I know what I need</h3>
               <p className="text-sm text-slate-600">
-                Explore experts by capability, sector, or deliverable. Save favourites and compare session formats side-by-side.
+                Explore the catalog by capability, sector, or deliverable. Shortlist experts, compare formats, and save briefs for later.
               </p>
             </div>
             <a
@@ -360,14 +363,14 @@ export default function LandingPage() {
               <span aria-hidden="true">→</span>
             </a>
           </article>
-          <article className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-within:-translate-y-1 focus-within:shadow-lg" tabIndex={-1}>
+          <article className="flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md focus-within:ring-2 focus-within:ring-primary/30" tabIndex={-1}>
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary" aria-hidden="true">
               <span className="text-2xl">🧭</span>
             </div>
             <div className="space-y-2">
               <h3 className="text-xl font-semibold text-slate-900">Match me with the right expert</h3>
               <p className="text-sm text-slate-600">
-                Answer a few questions and we will curate a shortlist plus agenda, usually within 30 minutes.
+                Answer a few questions and we will curate a shortlist, agenda, and prep checklist—typically within 30 minutes.
               </p>
             </div>
             <a
@@ -421,15 +424,22 @@ export default function LandingPage() {
             {experts.map((expert) => (
               <article
                 key={expert.id}
-                className="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-within:-translate-y-1 focus-within:shadow-lg"
+                className="flex h-full flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md focus-within:-translate-y-1 focus-within:shadow-md focus-within:ring-2 focus-within:ring-primary/30"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900">{expert.name}</h3>
                     <p className="text-sm text-slate-600">{expert.title}</p>
                   </div>
-                  <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                    <span aria-hidden="true">⭐</span>
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="m10 2.5 1.9 4.4 4.6.4-3.4 3.1.9 4.5L10 12.9l-4 1.9.9-4.5L3.5 7.3l4.6-.4L10 2.5Z" />
+                    </svg>
                     <span>
                       {expert.rating} ({expert.reviews})
                     </span>
@@ -443,7 +453,10 @@ export default function LandingPage() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {expert.tags.map((tag) => (
-                    <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                    <span
+                      key={tag}
+                      className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
+                    >
                       {tag}
                     </span>
                   ))}
@@ -470,6 +483,7 @@ export default function LandingPage() {
                   <a
                     href={`/booking/${expert.id}`}
                     className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    aria-label={`View profile for ${expert.name}`}
                   >
                     View profile
                   </a>
