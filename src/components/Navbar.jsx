@@ -61,6 +61,7 @@ export default function Navbar() {
           <LinkItem to="/">Home</LinkItem>
           <LinkItem to="/how-it-works">How It Works</LinkItem>
           <LinkItem to="/about">About</LinkItem>
+          <LinkItem to="/expert/flow">Expertflow</LinkItem>
 
           {/* Show Dashboard if logged in as business or expert */}
           {role && <LinkItem to={dashboardPath}>Dashboard</LinkItem>}
@@ -114,6 +115,7 @@ export default function Navbar() {
             <LinkItem to="/">Home</LinkItem>
             <LinkItem to="/how-it-works">How It Works</LinkItem>
             <LinkItem to="/about">About</LinkItem>
+            <LinkItem to="/expert/flow">Expertflow</LinkItem>
             {!role ? (
               <>
                 <LinkItem to="/login">Login</LinkItem>
