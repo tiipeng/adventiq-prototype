@@ -172,13 +172,13 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#how-it-works">
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#HowItWorks">
               How it works
             </a>
-            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#trust">
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#About">
               About
             </a>
-            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#experts">
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#ExpertCatalog">
               Browse experts
             </a>
           </div>
@@ -278,7 +278,7 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-wrap gap-3" role="group" aria-label="Primary actions">
               <a
-                href="#experts"
+                href="#ExpertCatalog"
                 className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 aria-label="Browse featured experts"
               >
@@ -327,7 +327,7 @@ export default function LandingPage() {
             </dl>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <a
-                href="#experts"
+                href="#SuggestedExperts"
                 className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 View profile
@@ -575,7 +575,7 @@ export default function LandingPage() {
             <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="/privacy">
               Privacy
             </a>
-            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-primary" href="/terms">
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-primary" href="#ExpertTCNDA">
               Terms
             </a>
             <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-primary" href="mailto:hello@adventiq.com">
