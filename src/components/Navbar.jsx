@@ -28,7 +28,7 @@ export default function Navbar() {
       className="flex items-center gap-2"
       aria-label="AdventIQ home"
     >
-      <img src={logo} alt="AdventIQ" className="h-8 w-auto" />
+      <img src='src/image/logo.png' alt="AdventIQ" className="h-8 w-auto" />
     </button>
   );
 
