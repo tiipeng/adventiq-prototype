@@ -1,10 +1,12 @@
 // /src/pages/Reports.jsx
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Card from '../components/Card.jsx'
 import Modal from '../components/Modal.jsx'
 
 export default function Reports() {
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
 
   const items = [
     { id: 1, name: 'Consultation Summary', owner: 'Dr. Jane Doe', date: '2025-10-10' },
@@ -17,12 +19,20 @@ export default function Reports() {
       <Card>
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-primary">reports</h3>
-          <button
-            onClick={() => setOpen(true)}
-            className="px-3 py-1.5 rounded-lg border hover:bg-neutral"
-          >
-            Open example
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/dashboard/report/review')}
+              className="px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary/90"
+            >
+              Review workflow
+            </button>
+            <button
+              onClick={() => setOpen(true)}
+              className="px-3 py-1.5 rounded-lg border hover:bg-neutral"
+            >
+              Open example
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
