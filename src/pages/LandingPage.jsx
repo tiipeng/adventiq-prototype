@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const filters = [
   { id: "specialty", label: "Specialty", active: true },
@@ -182,24 +183,24 @@ export default function LandingPage() {
             </a>
           </div>
           <div className="flex items-center gap-3 text-sm font-semibold">
-            <a
+            <Link
               className="text-slate-600 transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-              href="/login"
+              to="/login"
             >
               Login
-            </a>
-            <a
+            </Link>
+            <Link
               className="rounded-full border border-primary/20 px-4 py-2 text-primary transition hover:border-primary hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              href="/register"
+              to="/register"
             >
               Register
-            </a>
-            <a
+            </Link>
+            <Link
               className="hidden rounded-full bg-primary px-4 py-2 text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:inline-flex"
-              href="/booking/demo"
+              to="/booking/1"
             >
               Book a demo
-            </a>
+            </Link>
           </div>
         </nav>
       </header>
@@ -283,13 +284,13 @@ export default function LandingPage() {
               >
                 Browse experts
               </a>
-              <a
-                href="/questionnaire"
+              <Link
+                to="/questionnaire"
                 className="inline-flex items-center justify-center rounded-xl border border-primary px-5 py-3 text-sm font-semibold text-primary transition hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 aria-label="Get help choosing an expert"
               >
                 Help me choose
-              </a>
+              </Link>
             </div>
           </div>
           <div className="relative isolate overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
@@ -331,12 +332,12 @@ export default function LandingPage() {
               >
                 View profile
               </a>
-              <a
-                href="/booking/demo"
+              <Link
+                to="/dashboard/consultation"
                 className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-primary hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Share brief
-              </a>
+              </Link>
             </div>
           </div>
         </section>
@@ -373,13 +374,13 @@ export default function LandingPage() {
                 Answer a few questions and we will curate a shortlist, agenda, and prep checklist—typically within 30 minutes.
               </p>
             </div>
-            <a
-              href="/questionnaire"
+            <Link
+              to="/questionnaire"
               className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Start guided intake
               <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </article>
         </section>
 
@@ -480,13 +481,13 @@ export default function LandingPage() {
                     </svg>
                     {expert.nextSlot}
                   </span>
-                  <a
-                    href={`/booking/${expert.id}`}
+                  <Link
+                    to={`/booking/${expert.id}`}
                     className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     aria-label={`View profile for ${expert.name}`}
                   >
                     View profile
-                  </a>
+                  </Link>
                 </div>
               </article>
             ))}
@@ -539,13 +540,13 @@ export default function LandingPage() {
                 <span aria-hidden="true">•</span> Priority booking windows and on-demand lab availability
               </li>
             </ul>
-            <a
-              href="/register"
+            <Link
+              to="/register"
               className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Talk to sales
               <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
           <div className="flex flex-col justify-between gap-4 rounded-3xl bg-slate-50 p-6">
             <div className="space-y-2 text-sm text-slate-600">
