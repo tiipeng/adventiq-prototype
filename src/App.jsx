@@ -14,6 +14,9 @@ import NotFound from "./pages/NotFound.jsx";
 // Business & Expert (existing)
 import BusinessDashboard from "./pages/BusinessDashboard.jsx";
 import ExpertDashboard from "./pages/ExpertDashboard.jsx";
+import ConsultationSession from "./pages/ConsultationSession.jsx";
+import ReportReview from "./pages/ReportReview.jsx";
+import ConsultationCompletion from "./pages/ConsultationCompletion.jsx";
 
 // Consultation & Labs (existing from prior steps, if present — otherwise keep routes; components can be added later)
 import ConsultationHome from "./pages/ConsultationHome.jsx";
@@ -54,6 +57,9 @@ export default function App() {
 
           {/* Business dashboard */}
           <Route path="/dashboard" element={<BusinessDashboard />} />
+          <Route path="/dashboard/session/live" element={<ConsultationSession />} />
+          <Route path="/dashboard/report/review" element={<ReportReview />} />
+          <Route path="/dashboard/session/completion" element={<ConsultationCompletion />} />
 
           {/* Business → Consultation */}
           <Route path="/dashboard/consultation" element={<ConsultationHome />} />
