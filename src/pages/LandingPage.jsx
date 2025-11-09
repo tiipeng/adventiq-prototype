@@ -1,274 +1,574 @@
-// src/pages/LandingPage.jsx
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import SearchBar from "../components/SearchBar.jsx";
+import React from "react";
+
+const filters = [
+  { id: "specialty", label: "Specialty", active: true },
+  { id: "region", label: "Region", active: true },
+  { id: "availability", label: "Availability", active: false },
+  { id: "price", label: "Price", active: false },
+];
+
+const experts = [
+  {
+    id: 1,
+    name: "Dr. Lena Whitfield",
+    title: "Battery Aging Scientist",
+    rating: 4.9,
+    reviews: 182,
+    tags: ["Electrochemistry", "EV", "Failure analysis"],
+    bio:
+      "Former Panasonic lead chemist helping scale cathode chemistry and interpret accelerated aging data for commercialization milestones.",
+    nextSlot: "Tomorrow • 14:00 CET",
+  },
+  {
+    id: 2,
+    name: "Rajesh Kannan",
+    title: "Microscopy Lab Director",
+    rating: 4.8,
+    reviews: 96,
+    tags: ["Cryo-TEM", "Nanomaterials", "Sample prep"],
+    bio:
+      "Director at MicroVision Labs guiding startups on high-resolution imaging workflows, from hypothesis to annotated reports in under a week.",
+    nextSlot: "Thu • 09:30 CET",
+  },
+  {
+    id: 3,
+    name: "Dr. Elise Martín",
+    title: "Regulatory Strategist (EU MDR)",
+    rating: 5.0,
+    reviews: 214,
+    tags: ["EU MDR", "Clinical eval", "Quality"],
+    bio:
+      "Ex-Notified Body reviewer crafting MDR submissions, evidence plans, and response strategies that pass scrutiny on the first round.",
+    nextSlot: "Fri • 16:00 CET",
+  },
+  {
+    id: 4,
+    name: "Miguel Santos",
+    title: "Manufacturing Scale-Up Expert",
+    rating: 4.7,
+    reviews: 141,
+    tags: ["Scale-up", "Process design", "cGMP"],
+    bio:
+      "Former operations VP translating pilot runs into validated production lines with compliant documentation and supplier playbooks.",
+    nextSlot: "Mon • 11:00 CET",
+  },
+  {
+    id: 5,
+    name: "Dr. Ava Nguyen",
+    title: "Clinical Evidence Lead",
+    rating: 4.9,
+    reviews: 163,
+    tags: ["Clinical strategy", "Medtech", "Trials"],
+    bio:
+      "Clinical strategist aligning regulatory, payer, and investigator stakeholders to de-risk studies and accelerate approvals.",
+    nextSlot: "Wed • 13:30 CET",
+  },
+  {
+    id: 6,
+    name: "Noah Becker",
+    title: "Go-to-Market Strategist",
+    rating: 4.8,
+    reviews: 118,
+    tags: ["Positioning", "Pricing", "Launch"],
+    bio:
+      "B2B commercial strategist building launch plans, buyer messaging, and revenue experiments for regulated innovations.",
+    nextSlot: "Today • 18:00 CET",
+  },
+];
+
+const logos = ["Ionis", "NeuroPulse", "Helixion", "FluxLabs", "NovaThera"];
+
+const howItWorks = [
+  {
+    title: "Choose expert",
+    description: "Search and filter by specialty, availability, or price — every profile is vetted.",
+    icon: (
+      <svg
+        className="h-10 w-10 text-primary"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M11 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+        <path d="m20 20-3.5-3.5" />
+        <path d="M4 19a7 7 0 0 1 14 0" />
+      </svg>
+    ),
+  },
+  {
+    title: "Lock a time",
+    description: "Book a live consultation in minutes with instant calendar confirmation.",
+    icon: (
+      <svg
+        className="h-10 w-10 text-primary"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M7 3v4" />
+        <path d="M17 3v4" />
+        <rect x="4" y="5" width="16" height="16" rx="2" />
+        <path d="M4 11h16" />
+        <path d="m16 15-2 2-2-2" />
+      </svg>
+    ),
+  },
+  {
+    title: "Sync calendars",
+    description: "Receive prep notes, agenda, and recordings automatically shared with your team.",
+    icon: (
+      <svg
+        className="h-10 w-10 text-primary"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M5 5h14v14H5z" />
+        <path d="M9 9h6v6H9z" />
+        <path d="M4 12H2" />
+        <path d="M22 12h-2" />
+        <path d="M12 2v2" />
+        <path d="M12 22v-2" />
+      </svg>
+    ),
+  },
+];
 
 export default function LandingPage() {
-  const navigate = useNavigate();
-
-  const handleSelect = (type, payload) => {
-    if (type === "expert") navigate("/dashboard/consultation/browse");
-    else if (type === "lab") navigate("/dashboard/labs");
-    else navigate("/how-it-works");
-
-    console.log("Selected from search:", type, payload);
-  };
-
-  // ---------------------------
-  // ✅ Language Switcher Placeholder
-  // ---------------------------
-  const [lang, setLang] = useState(() => localStorage.getItem("lang") || "EN");
-  useEffect(() => {
-    localStorage.setItem("lang", lang);
-  }, [lang]);
-
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9FAFB] relative">
-      {/* ✅ Language Switcher at Top Right */}
-      <div className="absolute top-4 right-4">
-        <select
-          value={lang}
-          onChange={(e) => setLang(e.target.value)}
-          className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-        >
-          <option value="EN">EN</option>
-          <option value="DE">DE</option>
-          <option value="PL">PL</option>
-        </select>
-      </div>
+    <div className="bg-slate-50 text-gray-900">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold"
+      >
+        Skip to main content
+      </a>
 
-      {/* Hero Section */}
-      <section className="flex-1">
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-indigo-100 pointer-events-none" />
-          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16 md:py-24">
-            <div className="grid gap-12 lg:grid-cols-[1.1fr,0.9fr] items-center">
-              <div className="space-y-6">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-                  Fast Consulting for innovators
-                </span>
-                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                  Accelerate product decisions with on-demand experts.
-                </h1>
-                <p className="text-lg text-gray-600">
-                  Match with vetted consultants in R&D, regulatory, and go-to-market specialties.
-                  Bring your project to life faster with guided sessions, actionable next steps,
-                  and curated laboratory access when you need it.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => navigate("/dashboard/consultation")}
-                    className="rounded-xl px-5 py-3 bg-primary text-white font-semibold shadow-sm hover:opacity-90 transition"
-                    type="button"
-                  >
-                    Start Fast Consulting
-                  </button>
-                  <button
-                    onClick={() => navigate("/how-it-works")}
-                    className="rounded-xl px-5 py-3 border border-primary text-primary font-semibold hover:bg-white transition"
-                    type="button"
-                  >
-                    See How It Works
-                  </button>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-3 pt-4 border-t border-gray-200">
-                  <div>
-                    <p className="text-3xl font-bold text-gray-900">48h</p>
-                    <p className="text-sm text-gray-500">Average time from request to expert session</p>
-                  </div>
-                  <div>
-                    <p className="text-3xl font-bold text-gray-900">120+</p>
-                    <p className="text-sm text-gray-500">Specialists across biotech, medtech, and digital health</p>
-                  </div>
-                  <div>
-                    <p className="text-3xl font-bold text-gray-900">94%</p>
-                    <p className="text-sm text-gray-500">Clients reporting faster decision-making cycles</p>
-                  </div>
-                </div>
-              </div>
-              <div className="relative">
-                <div className="relative rounded-3xl bg-white shadow-xl border border-gray-100 p-6 md:p-8">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500">Next live consultation</p>
-                      <p className="text-xl font-semibold text-gray-900">Design Transfer Review</p>
-                    </div>
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                      Confirmed
-                    </span>
-                  </div>
-                  <div className="mt-6 space-y-5">
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
-                        JD
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Dr. Julia Dorn</p>
-                        <p className="text-xs text-gray-500">Regulatory Strategist · 12 yrs experience</p>
-                      </div>
-                    </div>
-                    <div className="rounded-2xl border border-dashed border-gray-200 p-4 bg-slate-50">
-                      <p className="text-sm font-semibold text-gray-700">Agenda</p>
-                      <ul className="mt-2 space-y-2 text-sm text-gray-600 list-disc list-inside">
-                        <li>Assess MDR submission readiness</li>
-                        <li>Align risk management documentation</li>
-                        <li>Outline validation timeline</li>
-                      </ul>
-                    </div>
-                    <div className="rounded-2xl bg-primary/5 p-4 text-sm text-gray-600">
-                      "The Fast Consulting sessions helped us prepare a market entry plan in one week." —
-                      <span className="font-semibold text-gray-900"> Alex, MedTech Founder</span>
-                    </div>
-                  </div>
-                  <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                    <button
-                      onClick={() => navigate("/dashboard/consultation/browse")}
-                      className="rounded-xl bg-primary text-white py-2.5 font-semibold hover:opacity-90 transition"
-                      type="button"
-                    >
-                      Browse Experts
-                    </button>
-                    <button
-                      onClick={() => navigate("/dashboard/labs")}
-                      className="rounded-xl border border-gray-200 py-2.5 font-semibold text-gray-700 hover:bg-gray-50 transition"
-                      type="button"
-                    >
-                      Find a Lab Partner
-                    </button>
-                  </div>
-                </div>
-              </div>
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <nav
+          className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8"
+          aria-label="Primary"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-bold text-white">
+              AI
+            </span>
+            <div className="flex flex-col">
+              <span className="text-base font-semibold tracking-tight">AdventIQ</span>
+              <span className="text-xs text-slate-500">Fast Consultation</span>
             </div>
           </div>
-        </div>
-
-        {/* Central Search */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 -mt-10">
-          <div className="rounded-3xl border border-gray-200 bg-white/90 backdrop-blur shadow-lg p-4 md:p-6">
-            <p className="text-sm font-semibold text-gray-700 mb-3">Search for a capability or topic</p>
-            <SearchBar onSelect={handleSelect} />
-            <p className="mt-2 text-xs text-gray-500">Hint: Try “Regulatory Strategy”, “ISO 13485”, or “Biotech Lab”.</p>
+          <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#how-it-works">
+              How it works
+            </a>
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#trust">
+              About
+            </a>
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="#experts">
+              Browse experts
+            </a>
           </div>
-        </div>
+          <div className="flex items-center gap-3 text-sm font-semibold">
+            <a
+              className="text-slate-600 transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+              href="/login"
+            >
+              Login
+            </a>
+            <a
+              className="rounded-full border border-primary/20 px-4 py-2 text-primary transition hover:border-primary hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              href="/register"
+            >
+              Register
+            </a>
+            <a
+              className="hidden rounded-full bg-primary px-4 py-2 text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:inline-flex"
+              href="/booking/demo"
+            >
+              Book a demo
+            </a>
+          </div>
+        </nav>
+      </header>
 
-        {/* Fast Consulting value props */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 mt-16">
-          <div className="flex flex-wrap items-center justify-between gap-6 border border-gray-200 rounded-3xl bg-white p-6 md:p-10 shadow-sm">
-            <div className="max-w-xl space-y-4">
-              <h2 className="text-3xl font-bold text-gray-900">Fast Consulting combines strategy, experts, and labs.</h2>
-              <p className="text-base text-gray-600">
-                Engage an expert for a focused sprint, receive a clear action report, and transition straight
-                into execution with the right lab or partner. Every project is curated by AdventIQ specialists.
+      <main id="main" className="mx-auto flex max-w-7xl flex-col gap-16 px-4 pb-20 pt-12 sm:px-6 lg:px-8 lg:pt-16">
+        <section className="grid gap-12 lg:grid-cols-[minmax(0,1fr),minmax(0,0.9fr)] lg:items-center">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1 text-sm font-semibold text-primary">
+              <span aria-hidden="true">⚡</span>
+              Fast-tracked expert guidance for hardware, biotech, and medtech teams
+            </div>
+            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              Find and book the right specialist in under 48 hours.
+            </h1>
+            <p className="max-w-xl text-lg text-slate-600">
+              AdventIQ connects R&D, product, and regulatory leaders with vetted experts who unblock critical decisions and deliver next steps you can act on immediately.
+            </p>
+            <div
+              role="search"
+              className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm shadow-slate-200/50"
+              aria-label="Search experts"
+            >
+              <form className="flex flex-col gap-3 sm:flex-row" onSubmit={(event) => event.preventDefault()}>
+                <label className="sr-only" htmlFor="expert-search">
+                  Search experts
+                </label>
+                <div className="relative flex-1">
+                  <input
+                    id="expert-search"
+                    type="search"
+                    placeholder="Search experts, e.g., battery ageing, microscopy…"
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    aria-describedby="search-help"
+                  />
+                  <svg
+                    className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="11" cy="11" r="6" />
+                    <path d="m20 20-3.5-3.5" />
+                  </svg>
+                </div>
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  Browse experts
+                </button>
+              </form>
+              <p id="search-help" className="mt-2 text-xs text-slate-500">
+                Popular: electrolyzer scale-up · EU MDR · pilot manufacturing
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3 w-full sm:w-auto">
-              {[
-                {
-                  title: "Curated experts",
-                  description: "Hand-selected consultants with proven track records and domain depth.",
-                },
-                {
-                  title: "Guided engagements",
-                  description: "Structured sessions tailored to your product milestones and evidence needs.",
-                },
-                {
-                  title: "Execution ready",
-                  description: "Immediate access to partnered labs and service providers to act on the plan.",
-                },
-              ].map((item) => (
-                <div key={item.title} className="rounded-2xl border border-gray-200 bg-slate-50 p-4">
-                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">{item.title}</h3>
-                  <p className="mt-2 text-sm text-gray-600">{item.description}</p>
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+                <span aria-hidden="true">⭐</span>
+                <span>
+                  4.8 average from <span className="font-bold">1,200+</span> reviews
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {logos.map((logo) => (
+                  <span key={logo} className="rounded-md border border-slate-200 bg-white px-3 py-2 text-slate-500">
+                    {logo}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3" role="group" aria-label="Primary actions">
+              <a
+                href="#experts"
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                Browse experts
+              </a>
+              <a
+                href="/questionnaire"
+                className="inline-flex items-center justify-center rounded-xl border border-primary px-5 py-3 text-sm font-semibold text-primary transition hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                Help me choose
+              </a>
+            </div>
+          </div>
+          <div className="relative isolate overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
+            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-primary/10" aria-hidden="true" />
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Next slot</p>
+                <p className="mt-1 text-lg font-semibold text-slate-900">Battery lab de-risking sprint</p>
+              </div>
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Confirmed</span>
+            </div>
+            <dl className="mt-6 grid gap-4 text-sm text-slate-600">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                  LW
+                </div>
+                <div>
+                  <dt className="font-semibold text-slate-900">Dr. Lena Whitfield</dt>
+                  <dd>Battery aging scientist • 12 yrs experience</dd>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Agenda</dt>
+                <dd className="mt-3 space-y-2 text-sm">
+                  <p>1. Validate accelerated aging protocol</p>
+                  <p>2. Interpret impedance spectroscopy findings</p>
+                  <p>3. Outline pilot line readiness checklist</p>
+                </dd>
+              </div>
+              <div className="rounded-2xl bg-primary/5 p-4 text-sm text-slate-700">
+                “We reduced our testing cycle by three weeks with Lena’s playbook.”
+                <span className="ml-1 font-semibold text-slate-900"> — Alex, CTO @ FluxLabs</span>
+              </div>
+            </dl>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <a
+                href="#experts"
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                View profile
+              </a>
+              <a
+                href="/booking/demo"
+                className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-primary hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                Share brief
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid gap-6 md:grid-cols-2" aria-labelledby="paths">
+          <h2 id="paths" className="sr-only">
+            Choose your path
+          </h2>
+          <article className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-within:-translate-y-1 focus-within:shadow-lg" tabIndex={-1}>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary" aria-hidden="true">
+              <span className="text-2xl">🔍</span>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-slate-900">I know what I need</h3>
+              <p className="text-sm text-slate-600">
+                Explore experts by capability, sector, or deliverable. Save favourites and compare session formats side-by-side.
+              </p>
+            </div>
+            <a
+              href="#filters"
+              className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Browse catalog
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+          <article className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-within:-translate-y-1 focus-within:shadow-lg" tabIndex={-1}>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary" aria-hidden="true">
+              <span className="text-2xl">🧭</span>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-slate-900">Match me with the right expert</h3>
+              <p className="text-sm text-slate-600">
+                Answer a few questions and we will curate a shortlist plus agenda, usually within 30 minutes.
+              </p>
+            </div>
+            <a
+              href="/questionnaire"
+              className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Start guided intake
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        </section>
+
+        <section id="filters" aria-labelledby="filter-heading" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="filter-heading" className="text-lg font-semibold text-slate-900">
+              Filter experts
+            </h2>
+            <button
+              type="button"
+              className="text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Reset filters
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2" role="toolbar" aria-label="Filter experts">
+            {filters.map((filter) => (
+              <button
+                key={filter.id}
+                type="button"
+                aria-pressed={filter.active}
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  filter.active
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-primary/60 hover:text-primary"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section id="experts" aria-labelledby="expert-heading" className="space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="expert-heading" className="text-2xl font-semibold text-slate-900">
+              Featured experts ready to talk this week
+            </h2>
+            <p className="text-sm text-slate-500">Showing {experts.length} experts • Times in CET</p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {experts.map((expert) => (
+              <article
+                key={expert.id}
+                className="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-within:-translate-y-1 focus-within:shadow-lg"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900">{expert.name}</h3>
+                    <p className="text-sm text-slate-600">{expert.title}</p>
+                  </div>
+                  <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                    <span aria-hidden="true">⭐</span>
+                    <span>
+                      {expert.rating} ({expert.reviews})
+                    </span>
+                  </div>
+                </div>
+                <p
+                  className="text-sm text-slate-600"
+                  style={{ display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+                >
+                  {expert.bio}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {expert.tags.map((tag) => (
+                    <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-auto flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M6 2v2" />
+                      <path d="M14 2v2" />
+                      <path d="M3 6h14" />
+                      <rect x="3" y="6" width="14" height="11" rx="2" />
+                    </svg>
+                    {expert.nextSlot}
+                  </span>
+                  <a
+                    href={`/booking/${expert.id}`}
+                    className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    View profile
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="how-it-works" aria-labelledby="process-heading" className="space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="process-heading" className="text-2xl font-semibold text-slate-900">
+              How AdventIQ consultation works
+            </h2>
+            <p className="text-sm text-slate-500">Every engagement is guided by a dedicated producer.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {howItWorks.map((step) => (
+              <article
+                key={step.title}
+                className="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 text-sm shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  {step.icon}
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900">{step.title}</h3>
+                <p className="text-sm text-slate-600">{step.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          id="trust"
+          aria-labelledby="trust-heading"
+          className="grid gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:grid-cols-[1.1fr,0.9fr] lg:p-8"
+        >
+          <div className="space-y-4">
+            <h2 id="trust-heading" className="text-2xl font-semibold text-slate-900">
+              Beyond the consultation
+            </h2>
+            <p className="text-sm text-slate-600">
+              Upgrade to our momentum plan and receive a quarterly outcomes review, curated vendor introductions, and a live playbook workspace shared with your internal team.
+            </p>
+            <ul className="space-y-2 text-sm text-slate-600">
+              <li className="flex items-start gap-2">
+                <span aria-hidden="true">•</span> Monthly progress clinics with your lead expert
+              </li>
+              <li className="flex items-start gap-2">
+                <span aria-hidden="true">•</span> Compliance-ready documentation templates
+              </li>
+              <li className="flex items-start gap-2">
+                <span aria-hidden="true">•</span> Priority booking windows and on-demand lab availability
+              </li>
+            </ul>
+            <a
+              href="/register"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Talk to sales
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <div className="flex flex-col justify-between gap-4 rounded-3xl bg-slate-50 p-6">
+            <div className="space-y-2 text-sm text-slate-600">
+              <p className="text-base font-semibold text-slate-900">Teams trust AdventIQ to ship faster:</p>
+              <p>“Our MDR dossier cleared on the first pass. AdventIQ’s experts kept the review on pace with zero surprises.”</p>
+              <p className="font-semibold text-slate-900">— Sofia, Head of Quality @ NovaThera</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+              {logos.map((logo) => (
+                <div key={logo} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-center text-slate-500">
+                  {logo}
                 </div>
               ))}
             </div>
           </div>
-        </div>
+        </section>
+      </main>
 
-        {/* Process section */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 mt-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center">How Fast Consulting works</h2>
-          <p className="mt-3 text-base text-gray-600 text-center">
-            A dedicated AdventIQ producer keeps the process moving so you never lose momentum.
-          </p>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {[
-              {
-                number: "01",
-                title: "Define your objective",
-                description: "Tell us the milestone you need to unlock. We scope the engagement within 30 minutes.",
-              },
-              {
-                number: "02",
-                title: "Meet curated experts",
-                description: "Join a live working session with one or more specialists tailored to your needs.",
-              },
-              {
-                number: "03",
-                title: "Act on a precise plan",
-                description: "Receive prioritized recommendations and connect with labs or partners instantly.",
-              },
-            ].map((step) => (
-              <div key={step.number} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                <span className="text-xs font-bold tracking-widest text-primary">STEP {step.number}</span>
-                <h3 className="mt-3 text-xl font-semibold text-gray-900">{step.title}</h3>
-                <p className="mt-2 text-sm text-gray-600">{step.description}</p>
-              </div>
-            ))}
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">AI</span>
+            <p className="text-sm">© {new Date().getFullYear()} AdventIQ. All rights reserved.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href="/privacy">
+              Privacy
+            </a>
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-primary" href="/terms">
+              Terms
+            </a>
+            <a className="transition hover:text-primary focus-visible:outline focus-visible:outline-primary" href="mailto:hello@adventiq.com">
+              Contact
+            </a>
           </div>
         </div>
-
-        {/* Testimonials */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 mt-16">
-          <div className="rounded-3xl bg-gradient-to-r from-primary to-indigo-500 text-white p-10 shadow-lg">
-            <div className="grid gap-8 md:grid-cols-[1.1fr,0.9fr] items-center">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold">Teams trust AdventIQ to deliver velocity.</h2>
-                <p className="text-base text-white/80">
-                  "Our Fast Consulting sprint clarified our FDA pathway and gave us a hiring plan in under a week.
-                  The follow-up lab work kicked off two days later."
-                </p>
-                <p className="text-sm font-semibold">Nina Patel · COO, HelixWave Diagnostics</p>
-              </div>
-              <div className="rounded-2xl bg-white/10 border border-white/20 p-6">
-                <h3 className="text-lg font-semibold">Use cases we accelerate</h3>
-                <ul className="mt-4 space-y-3 text-sm text-white/80">
-                  <li>• Clinical validation planning</li>
-                  <li>• Quality management system upgrades</li>
-                  <li>• Go-to-market launch readiness</li>
-                  <li>• Scaling manufacturing and supply chains</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Final CTA */}
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 mt-16 mb-20">
-          <div className="rounded-3xl border border-gray-200 bg-white p-10 shadow-sm text-center">
-            <h2 className="text-3xl font-bold text-gray-900">Ready to fast-track your next milestone?</h2>
-            <p className="mt-3 text-base text-gray-600">
-              Book a Fast Consulting intake today and get a curated expert recommendation within one business day.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button
-                onClick={() => navigate("/dashboard/consultation")}
-                className="rounded-xl px-6 py-3 bg-primary text-white font-semibold hover:opacity-90 transition"
-                type="button"
-              >
-                Request Fast Consulting
-              </button>
-              <button
-                onClick={() => navigate("/register")}
-                className="rounded-xl px-6 py-3 border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition"
-                type="button"
-              >
-                Create an Account
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      </footer>
     </div>
   );
 }
