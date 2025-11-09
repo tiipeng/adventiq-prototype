@@ -162,9 +162,16 @@ export default function LandingPage() {
           aria-label="Primary"
         >
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center bg-primary text-lg font-bold text-white">
-            <img src={logo} alt="AdventIQ" className="h-8 w-auto" />
-            </span>
+          <button
+      onClick={() => {
+        navigate("/");
+        setOpen(false);
+      }}
+      className="flex items-center gap-2"
+      aria-label="AdventIQ home"
+    >
+      <img src={logo} alt="AdventIQ" className="h-8 w-auto" />
+    </button>
             <div className="flex flex-col">
               <span className="text-base font-semibold tracking-tight">AdventIQ</span>
               <span className="text-xs text-slate-500">Fast Consultation</span>
