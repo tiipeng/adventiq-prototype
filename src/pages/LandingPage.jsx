@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from "../image/logo.png";
 
 const filters = [
   { id: "specialty", label: "Specialty", active: true },
@@ -164,7 +165,7 @@ export default function LandingPage() {
         >
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-bold text-white">
-            <img src={'src/image/logo.png'} alt="AdventIQ" className="h-8 w-auto" />
+            <img src={logo} alt="AdventIQ" className="h-8 w-auto" />
             </span>
             <div className="flex flex-col">
               <span className="text-base font-semibold tracking-tight">AdventIQ</span>
