@@ -164,7 +164,7 @@ export default function LandingPage() {
           aria-label="Primary"
         >
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-bold text-white">
+            <span className="flex h-10 w-10 items-center justify-center bg-primary text-lg font-bold text-white">
             <img src={logo} alt="AdventIQ" className="h-8 w-auto" />
             </span>
             <div className="flex flex-col">
