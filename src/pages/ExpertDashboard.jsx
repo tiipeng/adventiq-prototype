@@ -106,12 +106,23 @@ export default function ExpertDashboard() {
     target?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const openExpertflow = () => {
+    setActiveKey("expertflow");
+    navigate("/expert/flow");
+  };
+
   const sidebarItems = [
     {
       key: "dashboard",
       label: "Dashboard",
       description: "Pulse of your expert work",
       onSelect: () => handleScrollTo("dashboard", "top"),
+    },
+    {
+      key: "expertflow",
+      label: "Expertflow",
+      description: "Step-by-step consultation lifecycle",
+      onSelect: openExpertflow,
     },
     {
       key: "projectplan",
@@ -181,6 +192,49 @@ export default function ExpertDashboard() {
               </button>
             </div>
           </div>
+
+          <section className="mt-6" id="expertflow-preview">
+            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-primary">Expertflow overview</h2>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Review the nine-step lifecycle—from profile setup to final payout—before responding to new consultations.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={openExpertflow}
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+                >
+                  View full Expertflow
+                </button>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-3 text-sm text-gray-700">
+                <div className="rounded-xl border border-white/70 bg-white/70 p-3">
+                  <div className="font-medium text-primary">Prepare</div>
+                  <ul className="mt-1 list-disc space-y-1 pl-4 text-xs text-gray-600">
+                    <li>Complete expertise, rate, availability, and calendar sync.</li>
+                    <li>Flag Premium status if you can moderate meetings.</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl border border-white/70 bg-white/70 p-3">
+                  <div className="font-medium text-primary">Respond</div>
+                  <ul className="mt-1 list-disc space-y-1 pl-4 text-xs text-gray-600">
+                    <li>Requests hold your slots up to 36h while you review topic, scope, and compensation.</li>
+                    <li>Accept, decline, or let the invite expire after 24h.</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl border border-white/70 bg-white/70 p-3">
+                  <div className="font-medium text-primary">Deliver</div>
+                  <ul className="mt-1 list-disc space-y-1 pl-4 text-xs text-gray-600">
+                    <li>Join the AdventIQ session, approve extensions, and coordinate moderators if needed.</li>
+                    <li>Upload the report, handle feedback, and collect payment + invoice.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* Stats */}
           <section className="mt-6" id="dashboard-stats">
