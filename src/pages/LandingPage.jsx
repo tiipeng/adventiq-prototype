@@ -285,7 +285,7 @@ export default function LandingPage() {
                 Browse experts
               </a>
               <Link
-                to="#/dashboard/consultation/questionnaire"
+                to="/dashboard/consultation/questionnaire"
                 className="inline-flex items-center justify-center rounded-xl border border-primary px-5 py-3 text-sm font-semibold text-primary transition hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 aria-label="Get help choosing an expert"
               >
@@ -375,7 +375,7 @@ export default function LandingPage() {
               </p>
             </div>
             <Link
-              to="#/dashboard/consultation/questionnaire"
+              to="/dashboard/consultation/questionnaire"
               className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Start guided intake
