@@ -99,12 +99,13 @@ export default function ConsultationDetails() {
   const [problemArea, setProblemArea] = useState(
     () => sessionStorage.getItem("consultation_problemArea") || ""
   );
-  const [expectations, setExpectations] = useState(
-    () =>
-      sessionStorage.getItem("consultation_expectations") ||
-      questionnairePrefill?.goal ||
-      ""
-  );
+  const [expectations, setExpectations] = useState(() => {
+    const stored = sessionStorage.getItem("consultation_expectations");
+    if (stored) return stored;
+    if (questionnairePrefill?.goal) return questionnairePrefill.goal;
+    if (storedProjectDescription) return storedProjectDescription;
+    return "";
+  });
   const [duration, setDuration] = useState(() => {
     const stored = parseFloat(sessionStorage.getItem("consultation_duration"));
     if (Number.isFinite(stored)) {
@@ -199,6 +200,14 @@ export default function ConsultationDetails() {
     setAttachments((prev) => prev.filter((item) => item.name !== name));
   };
 
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("consultation_projectDescription", expectations || "");
+    } catch (error) {
+      console.warn("Unable to sync project description", error);
+    }
+  }, [expectations, storedProjectDescription]);
+
   const persistState = () => {
     try {
       sessionStorage.setItem(
@@ -219,6 +228,7 @@ export default function ConsultationDetails() {
       sessionStorage.setItem("consultation_time", time);
       sessionStorage.setItem("consultation_leader", includeLeader ? "true" : "false");
       sessionStorage.setItem("consultation_attachments", JSON.stringify(attachments));
+      sessionStorage.setItem("consultation_projectDescription", expectations || "");
       sessionStorage.setItem("consultation_estimatedTotal", String(grandTotal));
       setSaveState("saved");
       setTimeout(() => setSaveState("idle"), 3000);
@@ -250,7 +260,7 @@ export default function ConsultationDetails() {
       Math.max(duration, hoursRange.min) <= hoursRange.max
   );
 
-  const continueToScheduling = () => {
+  const continueToConfirmation = () => {
     if (!persistState()) return;
     if (!team.length) {
       navigate("/dashboard/consultation/browse");
@@ -263,7 +273,7 @@ export default function ConsultationDetails() {
     sessionStorage.setItem("booking_date", date);
     sessionStorage.setItem("booking_time", time);
     sessionStorage.setItem("booking_tier", includeLeader ? "premium" : "standard");
-    navigate(primary?.id ? `/booking/${primary.id}` : "/booking/review");
+    navigate("/booking/review");
   };
 
   if (!team.length) {
@@ -361,21 +371,20 @@ export default function ConsultationDetails() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Expectations / notes (optional)</label>
+              <label className="block text-sm font-medium text-gray-700">Project summary / expectations</label>
+              {storedProjectDescription && (
+                <p className="mt-1 text-xs text-gray-500">
+                  Prefilled with the description you added in the catalogue. Update it here if anything changed — edits stay
+                  synced for your experts.
+                </p>
+              )}
               <textarea
-                className="mt-1 w-full min-h-[120px] border border-gray-300 rounded-lg px-3 py-2"
+                className="mt-2 w-full min-h-[120px] border border-gray-300 rounded-lg px-3 py-2"
                 placeholder="Outline desired outcomes, success criteria, or known constraints…"
                 value={expectations}
                 onChange={(event) => setExpectations(event.target.value)}
               />
             </div>
-
-            {storedProjectDescription && (
-              <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 px-4 py-3 text-sm text-gray-700">
-                <div className="font-semibold text-primary text-xs uppercase tracking-wide">Project summary from catalogue</div>
-                <p className="mt-2 text-gray-600 whitespace-pre-wrap">{storedProjectDescription}</p>
-              </div>
-            )}
           </section>
 
           <section className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
@@ -574,10 +583,10 @@ export default function ConsultationDetails() {
             <button
               type="button"
               className="w-full rounded-xl bg-primary text-white px-3 py-2 font-medium hover:opacity-90 disabled:opacity-60"
-              onClick={continueToScheduling}
+              onClick={continueToConfirmation}
               disabled={!canSubmit}
             >
-              Save &amp; continue to scheduling
+              Save &amp; continue to confirmation
             </button>
             <button
               type="button"

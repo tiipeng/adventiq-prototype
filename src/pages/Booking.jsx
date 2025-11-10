@@ -31,7 +31,6 @@ export default function Booking() {
     try {
       sessionStorage.setItem("booking_date", date);
       sessionStorage.setItem("booking_time", time);
-      sessionStorage.removeItem("booking_tier");
       navigate("/booking/review");
     } catch (e) {
       console.error(e);

@@ -43,7 +43,7 @@ export default function BookingConfirmation() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="text-sm text-gray-500 mb-2">Booking · Step 3 of 3</div>
+      <div className="text-sm text-gray-500 mb-2">Booking · Request sent</div>
 
       <div className="rounded-xl border border-green-200 bg-green-50 text-green-800 px-4 py-3">
         <div className="font-semibold">Booking confirmed (Prototype)</div>
