@@ -73,9 +73,9 @@ export default function BookingReview() {
         <div className="mt-4">
           <button
             className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
-            onClick={() => navigate(expertId ? `/booking/${expertId}` : "/dashboard/consultation/browse")}
+            onClick={() => navigate("/dashboard/consultation/details")}
           >
-            Back to Step 1
+            Back to consultation details
           </button>
         </div>
       </div>
@@ -84,11 +84,12 @@ export default function BookingReview() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="text-sm text-gray-500 mb-2">Booking · Step 2 of 3</div>
+      <div className="text-sm text-gray-500 mb-2">Booking · Review &amp; confirm</div>
 
       <h1 className="text-2xl md:text-3xl font-bold text-primary">Tier & Details</h1>
       <p className="text-gray-600 mt-2">
-        Choose your service tier and add any optional context or materials.
+        Your scheduling choices from the consultation brief are carried forward. Pick a service tier and add optional context
+        before sending the request.
       </p>
 
       <div className="mt-6 grid lg:grid-cols-3 gap-6">
@@ -172,7 +173,7 @@ export default function BookingReview() {
           <div className="mt-4 flex gap-2">
             <button
               className="px-3 py-1.5 rounded-lg border hover:bg-gray-50"
-              onClick={() => navigate(`/booking/${expertId}`)}
+              onClick={() => navigate("/dashboard/consultation/details")}
             >
               Back
             </button>
