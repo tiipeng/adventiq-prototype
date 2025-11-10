@@ -37,13 +37,16 @@ export default function SummaryCard({ expert, dateTime, tier }) {
   const location = expert?.location || "—";
   const tags = normalizeTags(expert?.tags);
   const directHourly =
-    typeof expert?.hourlyRate === "number" && !Number.isNaN(expert.hourlyRate)
+    typeof expert?.hourlyRate === "number" && Number.isFinite(expert.hourlyRate)
       ? expert.hourlyRate
       : null;
-  const base = directHourly ?? (parsePriceToNumber(expert?.price) || 250); // fallback base
+  const baseHourly = directHourly ?? (parsePriceToNumber(expert?.price) || 250); // fallback base
+  const leaderFee = 50;
   const isPremium = tier === "premium";
-  const uplift = isPremium ? 150 : 0; // mock uplift for premium
-  const total = base + uplift;
+  const leaderIncluded = isPremium;
+  const total = baseHourly + (leaderIncluded ? leaderFee : 0);
+  const formattedBase = Number.isFinite(baseHourly) ? baseHourly.toFixed(0) : "0";
+  const formattedTotal = Number.isFinite(total) ? total.toFixed(0) : formattedBase;
 
   return (
     <div className="rounded-xl border border-gray-200 p-4">
@@ -77,21 +80,29 @@ export default function SummaryCard({ expert, dateTime, tier }) {
             </div>
           ) : null}
 
-          <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-            <div>
+          <div className="mt-3 space-y-2 text-sm">
+            <div className="flex items-center justify-between">
               <div className="text-gray-500">Base price</div>
-              <div className="font-medium">€{base}/h</div>
+              <div className="font-medium">€{formattedBase}/h</div>
             </div>
-            <div>
-              <div className="text-gray-500">Total (mock)</div>
+            <div className="flex items-center justify-between">
+              <div className="text-gray-500">AdventIQ Leader</div>
               <div className="font-medium flex items-center gap-2">
-                €{total}
-                {isPremium && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#00B7C2]/10 text-[#0A2540]">
-                    Premium +€{uplift}
-                  </span>
+                {leaderIncluded ? (
+                  <>
+                    +€{leaderFee} flat
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#00B7C2]/10 text-[#0A2540]">
+                      Premium service
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-gray-500">Not added</span>
                 )}
               </div>
+            </div>
+            <div className="flex items-center justify-between text-base font-semibold text-primary">
+              <div>Total (mock)</div>
+              <div>€{formattedTotal}</div>
             </div>
           </div>
 
@@ -100,6 +111,13 @@ export default function SummaryCard({ expert, dateTime, tier }) {
               Tier: <span className="font-medium capitalize">{tier}</span>
             </div>
           ) : null}
+
+          {leaderIncluded && (
+            <p className="mt-2 text-xs text-gray-600">
+              Includes an AdventIQ Leader who guides the process end-to-end, helps, and supports across basics and
+              meritoric topics.
+            </p>
+          )}
         </div>
       </div>
     </div>
