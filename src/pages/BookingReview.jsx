@@ -5,20 +5,109 @@ import { experts as expertsFromData } from "../data/mockData.js";
 import TierSelector from "../components/TierSelector.jsx";
 import SummaryCard from "../components/SummaryCard.jsx";
 
+const LEADER_FLAT_FEE = 50;
+
+function parseTeamFromSession() {
+  try {
+    const raw = sessionStorage.getItem("consultation_team");
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((member) => {
+        if (!member) return null;
+        const hourlyRaw = member.hourlyRate;
+        const hoursRaw = member.hours;
+        const hourly =
+          typeof hourlyRaw === "number"
+            ? hourlyRaw
+            : typeof hourlyRaw === "string"
+              ? Number.parseFloat(hourlyRaw)
+              : null;
+        const hours =
+          typeof hoursRaw === "number"
+            ? hoursRaw
+            : typeof hoursRaw === "string"
+              ? Number.parseFloat(hoursRaw)
+              : null;
+        return {
+          ...member,
+          hourlyRate: Number.isFinite(hourly) ? hourly : null,
+          hours: Number.isFinite(hours) ? hours : null,
+        };
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.warn("Unable to parse consultation team", error);
+    return [];
+  }
+}
+
+function safeParsePrice(value) {
+  if (value == null) return null;
+  const match = String(value).match(/(\d+(?:[.,]\d+)?)/);
+  if (!match) return null;
+  const numeric = Number(match[1].replace(",", "."));
+  return Number.isFinite(numeric) ? numeric : null;
+}
+
 export default function BookingReview() {
   const navigate = useNavigate();
 
-  // Pull selections from Step 1 (stored in sessionStorage by Booking.jsx)
-  const expertId = sessionStorage.getItem("booking_expertId");
-  const date = sessionStorage.getItem("booking_date");
-  const time = sessionStorage.getItem("booking_time");
+  const storedExpertId = sessionStorage.getItem("booking_expertId");
+  const fallbackExpertId = sessionStorage.getItem("consultation_expertId");
+  const expertId = storedExpertId || fallbackExpertId;
 
-  // Resolve expert
+  const date =
+    sessionStorage.getItem("booking_date") ||
+    sessionStorage.getItem("consultation_date") ||
+    "";
+  const time =
+    sessionStorage.getItem("booking_time") ||
+    sessionStorage.getItem("consultation_time") ||
+    "";
+
+  const consultationTeam = useMemo(parseTeamFromSession, []);
+
   const experts = Array.isArray(expertsFromData) ? expertsFromData : [];
-  const expert = useMemo(
-    () => experts.find((e) => String(e.id) === String(expertId)),
-    [experts, expertId]
-  );
+  const resolvedExpertId = expertId || (consultationTeam[0]?.id ?? null);
+
+  const expertFromDataset = useMemo(() => {
+    if (!resolvedExpertId) return null;
+    return experts.find((e) => String(e.id) === String(resolvedExpertId)) || null;
+  }, [experts, resolvedExpertId]);
+
+  const expertFromTeam = useMemo(() => {
+    if (!consultationTeam.length) return null;
+    if (resolvedExpertId) {
+      const match = consultationTeam.find((member) => String(member.id) === String(resolvedExpertId));
+      if (match) return match;
+    }
+    return consultationTeam[0];
+  }, [consultationTeam, resolvedExpertId]);
+
+  const primaryExpert = useMemo(() => {
+    if (expertFromTeam) {
+      const mergedTags =
+        (Array.isArray(expertFromTeam.tags) && expertFromTeam.tags.length
+          ? expertFromTeam.tags
+          : expertFromDataset?.tags) || [];
+      return {
+        ...expertFromDataset,
+        ...expertFromTeam,
+        tags: mergedTags,
+        location: expertFromTeam.location || expertFromDataset?.location || "—",
+        price: expertFromTeam.price ?? expertFromDataset?.price ?? null,
+        hourlyRate: expertFromTeam.hourlyRate ?? expertFromDataset?.hourlyRate ?? null,
+      };
+    }
+    return expertFromDataset || null;
+  }, [expertFromDataset, expertFromTeam]);
+
+  const additionalTeamMembers = useMemo(() => {
+    if (consultationTeam.length <= 1) return [];
+    return consultationTeam.slice(1);
+  }, [consultationTeam]);
 
   const consultationTopic = sessionStorage.getItem("consultation_topic") || "";
   const consultationSector = sessionStorage.getItem("consultation_sector") || "";
@@ -28,11 +117,10 @@ export default function BookingReview() {
     const stored = parseFloat(sessionStorage.getItem("consultation_duration"));
     return Number.isFinite(stored) ? stored : null;
   })();
-  const consultationLeaderIncluded = sessionStorage.getItem("consultation_leader") === "true";
-  const consultationTotal = (() => {
+  const [estimatedTotal, setEstimatedTotal] = useState(() => {
     const stored = parseFloat(sessionStorage.getItem("consultation_estimatedTotal"));
     return Number.isFinite(stored) ? stored : null;
-  })();
+  });
   const consultationAttachments = useMemo(() => {
     try {
       const raw = sessionStorage.getItem("consultation_attachments");
@@ -44,26 +132,52 @@ export default function BookingReview() {
     }
   }, []);
 
-  // Local tier & notes state (persist in session, UI-only)
-  const [tier, setTier] = useState(() => sessionStorage.getItem("booking_tier") || "standard");
+  const initialTier = useMemo(() => {
+    const storedTier = sessionStorage.getItem("booking_tier");
+    if (storedTier) return storedTier;
+    return sessionStorage.getItem("consultation_leader") === "true" ? "premium" : "standard";
+  }, []);
+  const [tier, setTier] = useState(initialTier);
   const [notes, setNotes] = useState(() => sessionStorage.getItem("booking_notes") || "");
+
+  const baseHourly = useMemo(() => {
+    if (!primaryExpert) return null;
+    if (typeof primaryExpert.hourlyRate === "number" && Number.isFinite(primaryExpert.hourlyRate)) {
+      return primaryExpert.hourlyRate;
+    }
+    return safeParsePrice(primaryExpert.price);
+  }, [primaryExpert]);
+
+  const computedTotal = useMemo(() => {
+    if (!Number.isFinite(baseHourly)) return null;
+    return baseHourly + (tier === "premium" ? LEADER_FLAT_FEE : 0);
+  }, [baseHourly, tier]);
 
   useEffect(() => {
     sessionStorage.setItem("booking_tier", tier);
   }, [tier]);
 
-  const canConfirm = Boolean(expert && date && time && tier);
+  useEffect(() => {
+    sessionStorage.setItem("consultation_leader", tier === "premium" ? "true" : "false");
+  }, [tier]);
+
+  useEffect(() => {
+    if (computedTotal == null || computedTotal === estimatedTotal) return;
+    setEstimatedTotal(computedTotal);
+    sessionStorage.setItem("consultation_estimatedTotal", String(computedTotal));
+  }, [computedTotal, estimatedTotal]);
+
+  const leaderIncluded = tier === "premium";
+  const canConfirm = Boolean(primaryExpert && date && time && tier);
 
   const onConfirm = () => {
-    // Persist any notes and go to confirmation
     sessionStorage.setItem("booking_notes", notes || "");
-    // Generate a mock reference for confirmation page
     const ref = `AIQ-2025-${String(Math.floor(Math.random() * 10000)).padStart(4, "0")}`;
     sessionStorage.setItem("booking_ref", ref);
     navigate("/booking/confirmation");
   };
 
-  if (!expert || !date || !time) {
+  if (!primaryExpert || !date || !time) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12">
         <h1 className="text-2xl md:text-3xl font-bold text-primary">Incomplete booking</h1>
@@ -98,6 +212,14 @@ export default function BookingReview() {
           <h3 className="font-semibold text-primary mb-3">Select a tier</h3>
           <TierSelector value={tier} onChange={setTier} />
 
+          <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-[#0A2540]">
+            <div className="font-semibold">Why add an AdventIQ Leader?</div>
+            <p className="mt-1 text-xs md:text-sm text-[#0A2540]/80">
+              They lead the entire process, help and guide you through preparation, and support across basics and
+              meritoric topics so your consultation stays on track.
+            </p>
+          </div>
+
           <div className="mt-6">
             <h3 className="font-semibold text-primary">Additional context / materials (optional)</h3>
             <textarea
@@ -112,7 +234,41 @@ export default function BookingReview() {
 
         {/* Right: Summary */}
         <div className="bg-white border border-gray-200 rounded-xl p-5 h-fit">
-          <SummaryCard expert={expert} dateTime={`${date} · ${time}`} tier={tier} />
+          <SummaryCard expert={primaryExpert} dateTime={`${date} · ${time}`} tier={tier} />
+
+          {additionalTeamMembers.length > 0 && (
+            <div className="mt-4 rounded-xl border border-gray-200 px-4 py-3">
+              <div className="font-semibold text-primary text-sm uppercase tracking-wide">Expert team</div>
+              <p className="text-xs text-gray-600 mt-1">
+                Your request includes {additionalTeamMembers.length + 1} experts. The lead expert is listed above; other
+                specialists are noted here for visibility.
+              </p>
+              <div className="mt-3 space-y-2 text-xs text-gray-700">
+                {additionalTeamMembers.map((member) => {
+                  const tags = Array.isArray(member.tags)
+                    ? member.tags
+                    : typeof member.tags === "string"
+                      ? member.tags.split(",").map((t) => t.trim()).filter(Boolean)
+                      : [];
+                  return (
+                    <div key={member.id || member.name} className="rounded-lg border border-gray-100 px-3 py-2">
+                      <div className="font-semibold text-primary text-sm">{member.name || "Expert"}</div>
+                      <div className="text-[11px] text-gray-500">{member.location || "—"}</div>
+                      {tags.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {tags.map((tag) => (
+                            <span key={tag} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {(consultationTopic || consultationSector || consultationProblemArea || consultationAttachments.length) && (
             <div className="mt-4 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-700 space-y-2">
@@ -138,7 +294,7 @@ export default function BookingReview() {
                 </div>
               )}
               <div>
-                <span className="text-gray-500">AdventIQ Leader:</span> {consultationLeaderIncluded ? "Included" : "Not added"}
+                <span className="text-gray-500">AdventIQ Leader:</span> {leaderIncluded ? "Included" : "Not added"}
               </div>
               {consultationExpectations && (
                 <div className="text-gray-600 whitespace-pre-wrap border-t border-gray-100 pt-2 text-xs">
@@ -149,20 +305,22 @@ export default function BookingReview() {
                 <div className="text-xs text-gray-600 border-t border-gray-100 pt-2 space-y-1">
                   <div className="font-semibold text-gray-700">Attachments</div>
                   <ul className="list-disc pl-5 space-y-1">
-                    {consultationAttachments.map((file) => (
-                      <li key={file.name}>{file.name}</li>
-                    ))}
+                    {consultationAttachments.map((file) => {
+                      const displayName =
+                        typeof file === "string" ? file : file?.name || "Attachment";
+                      return <li key={displayName}>{displayName}</li>;
+                    })}
                   </ul>
                 </div>
               )}
             </div>
           )}
 
-          {consultationTotal != null && (
+          {estimatedTotal != null && (
             <div className="mt-4 rounded-xl border border-primary/40 bg-primary/5 px-4 py-3 text-sm text-[#0A2540] space-y-1">
               <div className="flex items-center justify-between font-semibold">
                 <span>Estimated total</span>
-                <span>€{consultationTotal.toFixed(2)}</span>
+                <span>€{estimatedTotal.toFixed(2)}</span>
               </div>
               <p className="text-xs text-[#0A2540]/80">
                 Live session total based on the consultation brief. Final invoice is issued after expert confirmation.

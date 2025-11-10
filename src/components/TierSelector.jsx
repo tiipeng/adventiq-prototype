@@ -2,7 +2,7 @@
 import React from "react";
 
 export default function TierSelector({ value, onChange }) {
-  const Card = ({ tier, title, subtitle, bullets, badge }) => {
+  const Card = ({ tier, title, subtitle, bullets, badge, extra }) => {
     const active = value === tier;
     return (
       <button
@@ -28,6 +28,7 @@ export default function TierSelector({ value, onChange }) {
             <li key={b}>{b}</li>
           ))}
         </ul>
+        {extra ? <div className="mt-3 text-xs text-gray-600">{extra}</div> : null}
         <div
           className={`mt-3 text-xs font-medium ${
             active ? "text-primary" : "text-gray-500"
@@ -50,7 +51,13 @@ export default function TierSelector({ value, onChange }) {
           "Pre-brief and scope confirmation",
           "Report quality check",
         ]}
-        badge="+€150 service uplift (mock)"
+        badge="+€50 flat uplift"
+        extra={
+          <span>
+            The AdventIQ Leader leads the whole process, helps and guides you, and supports across basics and
+            meritoric topics.
+          </span>
+        }
       />
       <Card
         tier="standard"
