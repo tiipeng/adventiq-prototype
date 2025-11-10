@@ -100,7 +100,7 @@ const howItWorks = [
     ),
   },
   {
-    title: "Lock a time",
+    title: "Book",
     description: "Book a live consultation in minutes with instant calendar confirmation.",
     icon: (
       <svg
@@ -216,13 +216,13 @@ export default function LandingPage() {
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1 text-sm font-semibold text-primary">
               <span aria-hidden="true">⚡</span>
-              On-demand experts for deeptech, medtech, and scale-up teams
+              On-demand experts for R&D, medtech & scale-ups
             </div>
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Book the specialist who ships answers before your next sprint review.
+            Talk to the right expert
             </h1>
             <p className="max-w-xl text-lg text-slate-600">
-              AdventIQ pairs product, R&amp;D, and regulatory leaders with vetted scientists, operators, and advisors who translate challenges into concrete experiments, documentation, and next steps.
+            Vetted scientists and operators who turn your questions into clear next steps, fast.
             </p>
             <div
               role="search"
@@ -416,7 +416,7 @@ export default function LandingPage() {
         <section id="experts" aria-labelledby="expert-heading" className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="expert-heading" className="text-2xl font-semibold text-slate-900">
-              Featured experts ready to talk this week
+              Featured experts
             </h2>
             <p className="text-sm text-slate-500">Showing {experts.length} experts • Times in CET</p>
           </div>
@@ -513,46 +513,6 @@ export default function LandingPage() {
                 <p className="text-sm text-slate-600">{step.description}</p>
               </article>
             ))}
-          </div>
-        </section>
-
-        <section
-          id="trust"
-          aria-labelledby="trust-heading"
-          className="grid gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:grid-cols-[1.1fr,0.9fr] lg:p-8"
-        >
-          <div className="space-y-4">
-            <h2 id="trust-heading" className="text-2xl font-semibold text-slate-900">
-              Beyond the consultation
-            </h2>
-            <p className="text-sm text-slate-600">
-              Upgrade to our momentum plan and receive a quarterly outcomes review, curated vendor introductions, and a live playbook workspace shared with your internal team.
-            </p>
-            <ul className="space-y-2 text-sm text-slate-600">
-              <li className="flex items-start gap-2">
-                <span aria-hidden="true">•</span> Monthly progress clinics with your lead expert
-              </li>
-              <li className="flex items-start gap-2">
-                <span aria-hidden="true">•</span> Compliance-ready documentation templates
-              </li>
-              <li className="flex items-start gap-2">
-                <span aria-hidden="true">•</span> Priority booking windows and on-demand lab availability
-              </li>
-            </ul>
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              Talk to sales
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-          <div className="flex flex-col justify-between gap-4 rounded-3xl bg-slate-50 p-6">
-            <div className="space-y-2 text-sm text-slate-600">
-              <p className="text-base font-semibold text-slate-900">Teams trust AdventIQ to ship faster:</p>
-              <p>“Our MDR dossier cleared on the first pass. AdventIQ’s experts kept the review on pace with zero surprises.”</p>
-              <p className="font-semibold text-slate-900">— Sofia, Head of Quality @ NovaThera</p>
-            </div>
           </div>
         </section>
       </main>

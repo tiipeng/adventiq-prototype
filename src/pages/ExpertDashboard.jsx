@@ -111,31 +111,26 @@ export default function ExpertDashboard() {
       key: "dashboard",
       label: "Dashboard",
       description: "Pulse of your expert work",
-      onSelect: () => handleScrollTo("dashboard", "top"),
     },
     {
       key: "projectplan",
       label: "Project Plan",
       description: "Milestones with clients",
-      onSelect: () => handleScrollTo("projectplan", "project-plan"),
     },
     {
       key: "datashare",
       label: "Data Share Point",
       description: "Files to review & deliver",
-      onSelect: () => handleScrollTo("datashare", "data-share"),
     },
     {
       key: "reports",
       label: "Reports & Visualisation",
       description: "Outputs you owe",
-      onSelect: () => handleScrollTo("reports", "reports"),
     },
     {
       key: "communications",
       label: "Chat / Mailbox",
       description: "Client conversations",
-      onSelect: () => handleScrollTo("communications", "communications"),
     },
     {
       key: "account",
@@ -207,91 +202,6 @@ export default function ExpertDashboard() {
                   >
                     {accepted ? "Accepted" : "Pending"}
                   </span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="mt-8" id="project-plan">
-            <h2 className="text-lg font-semibold text-primary">Project Plan</h2>
-            <div className="mt-3 grid md:grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Client Kick-off</div>
-                  <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">This week</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Confirm agenda & deliverables</li>
-                  <li>Request supporting documentation</li>
-                  <li>Outline decision makers</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Research Sprint</div>
-                  <span className="text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">Next 10 days</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Analyse shared datasets</li>
-                  <li>Schedule lab sync if required</li>
-                  <li>Draft interim findings</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Executive Session</div>
-                  <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">In 2 weeks</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Finalise presentation deck</li>
-                  <li>Align with co-presenters</li>
-                  <li>Prep Q&A responses</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="font-medium text-primary">Action Items</div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Update availability calendar</li>
-                  <li>Submit expense estimates</li>
-                  <li>Share open questions with client</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          <section className="mt-8" id="data-share">
-            <h2 className="text-lg font-semibold text-primary">Data Share Point</h2>
-            <div className="mt-3 grid md:grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="font-medium text-primary">Client Assets</div>
-                <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center justify-between">
-                    <span>Manufacturing Line Specs.xlsx</span>
-                    <span className="text-xs text-gray-400">Updated today</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span>Risk Register.pdf</span>
-                    <span className="text-xs text-gray-400">2 days ago</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span>Q&A Thread.docx</span>
-                    <span className="text-xs text-gray-400">Last week</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="font-medium text-primary">Your Deliverables</div>
-                <p className="mt-3 text-sm text-gray-600">
-                  Upload annotated findings, session recordings, or slide decks directly to the workspace
-                  to keep stakeholders aligned.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm">
-                    Upload Files
-                  </button>
-                  <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm">
-                    Request Data
-                  </button>
                 </div>
               </div>
             </div>
@@ -375,40 +285,6 @@ export default function ExpertDashboard() {
                   <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm">
                     Schedule Review
                   </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="mt-8" id="communications">
-            <h2 className="text-lg font-semibold text-primary">Chat / Mailbox</h2>
-            <div className="mt-3 grid md:grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Recent Threads</div>
-                  <span className="text-xs text-gray-400">Prototype</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 space-y-2">
-                  <li>
-                    <div className="font-medium text-primary">Acme Robotics</div>
-                    <div className="text-xs text-gray-500">“Could we add a section on ROI sensitivity?”</div>
-                  </li>
-                  <li>
-                    <div className="font-medium text-primary">GreenCell GmbH</div>
-                    <div className="text-xs text-gray-500">“Shared the thermal run-up data you requested.”</div>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
-                <div className="font-medium text-primary">Reply Draft</div>
-                <textarea
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  rows={5}
-                  placeholder="Draft your response or notes for the next touchpoint..."
-                />
-                <div className="flex gap-2 justify-end">
-                  <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm">Save Draft</button>
-                  <button className="px-3 py-1.5 rounded-lg bg-primary text-white text-sm">Send Reply</button>
                 </div>
               </div>
             </div>

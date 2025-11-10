@@ -130,31 +130,26 @@ export default function BusinessDashboard() {
       key: "dashboard",
       label: "Dashboard",
       description: "Overview of bookings and actions",
-      onSelect: () => handleScrollTo("dashboard", "top"),
     },
     {
       key: "projectplan",
       label: "Project Plan",
       description: "Timeline and coordination",
-      onSelect: () => handleScrollTo("projectplan", "project-plan"),
     },
     {
       key: "datashare",
       label: "Data Share Point",
       description: "Shared assets & briefs",
-      onSelect: () => handleScrollTo("datashare", "data-share"),
     },
     {
       key: "reports",
       label: "Reports & Visualisation",
       description: "Consultation outputs",
-      onSelect: () => handleScrollTo("reports", "reports"),
     },
     {
       key: "communications",
       label: "Chat / Mailbox",
       description: "Stakeholder updates",
-      onSelect: () => handleScrollTo("communications", "communications"),
     },
     {
       key: "account",
@@ -276,91 +271,6 @@ export default function BusinessDashboard() {
                   .
                 </div>
               )}
-            </div>
-          </section>
-
-          <section className="mt-8" id="project-plan">
-            <h2 className="text-lg font-semibold text-primary">Project Plan</h2>
-            <div className="mt-3 grid md:grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Discovery & Scoping</div>
-                  <span className="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">Week 1</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Kick-off with internal stakeholders</li>
-                  <li>Share background documentation with experts</li>
-                  <li>Align on success metrics</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Implementation Sprint</div>
-                  <span className="text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">Weeks 2-3</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Expert workshops & async Q&amp;A</li>
-                  <li>Draft recommendations & lab experiments</li>
-                  <li>Share data snapshots for validation</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Final Review</div>
-                  <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">Week 4</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Report walkthrough with leadership</li>
-                  <li>Decide next steps & budget approvals</li>
-                  <li>Archive project learnings</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="font-medium text-primary">Next Actions</div>
-                <ul className="mt-3 text-sm text-gray-600 list-disc list-inside space-y-1">
-                  <li>Schedule follow-up consultation</li>
-                  <li>Prepare procurement package</li>
-                  <li>Invite data stewards to workspace</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          <section className="mt-8" id="data-share">
-            <h2 className="text-lg font-semibold text-primary">Data Share Point</h2>
-            <div className="mt-3 grid md:grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="font-medium text-primary">Latest Uploads</div>
-                <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center justify-between">
-                    <span>Process Overview.pdf</span>
-                    <span className="text-xs text-gray-400">2 days ago</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span>Q3 Sensor Data.csv</span>
-                    <span className="text-xs text-gray-400">5 days ago</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span>Lab Brief.docx</span>
-                    <span className="text-xs text-gray-400">1 week ago</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="font-medium text-primary">Access & Permissions</div>
-                <p className="mt-3 text-sm text-gray-600">
-                  Invite internal collaborators and experts to securely exchange files. Configure read or
-                  upload-only access for labs and advisory partners.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm">
-                    Manage Members
-                  </button>
-                  <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm">
-                    Create Upload Link
-                  </button>
-                </div>
-              </div>
             </div>
           </section>
 
@@ -499,40 +409,6 @@ export default function BusinessDashboard() {
                   No reports yet. Your consultation summaries will appear here.
                 </div>
               )}
-            </div>
-          </section>
-
-          <section className="mt-8" id="communications">
-            <h2 className="text-lg font-semibold text-primary">Chat / Mailbox</h2>
-            <div className="mt-3 grid md:grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-primary">Latest Conversations</div>
-                  <span className="text-xs text-gray-400">Prototype</span>
-                </div>
-                <ul className="mt-3 text-sm text-gray-600 space-y-2">
-                  <li>
-                    <div className="font-medium text-primary">Dr. Jane Bauer</div>
-                    <div className="text-xs text-gray-500">“Uploaded preliminary findings for review.”</div>
-                  </li>
-                  <li>
-                    <div className="font-medium text-primary">Lab Team</div>
-                    <div className="text-xs text-gray-500">“Awaiting dataset access to proceed.”</div>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
-                <div className="font-medium text-primary">Compose Update</div>
-                <textarea
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  rows={5}
-                  placeholder="Share an update or request with your expert team..."
-                />
-                <div className="flex gap-2 justify-end">
-                  <button className="px-3 py-1.5 rounded-lg border hover:bg-gray-50 text-sm">Save Draft</button>
-                  <button className="px-3 py-1.5 rounded-lg bg-primary text-white text-sm">Send Message</button>
-                </div>
-              </div>
             </div>
           </section>
         </div>
